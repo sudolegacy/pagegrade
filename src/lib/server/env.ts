@@ -35,4 +35,10 @@ export const env = {
   get internalUrl() { return (str('INTERNAL_APP_URL') || `http://127.0.0.1:${str('PORT', '3000')}`).replace(/\/$/, ''); },
   /** Signs the welcome email. */
   get founderName() { return str('FOUNDER_NAME'); },
+  /** Where sign-up alerts, pack requests and the weekly digest go: FOUNDER_ALERT_EMAIL, else the first admin. */
+  get founderAlertEmail() { return str('FOUNDER_ALERT_EMAIL').toLowerCase() || env.adminEmails[0] || ''; },
+  /** Estimated AI spend per day (UTC) after which the worker pauses every review. */
+  get aiDailyBudgetUsd() { return Math.max(0, num('AI_DAILY_BUDGET_USD', 25)); },
+  /** Public booking link (Cal.com, Calendly...) for the 15-minute agency call; optional. */
+  get bookingUrl() { return str('NEXT_PUBLIC_BOOKING_URL') || str('BOOKING_URL'); },
 };
