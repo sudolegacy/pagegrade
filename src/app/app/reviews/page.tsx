@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { FileSearch, Plus, Search } from 'lucide-react';
+import { Download, FileSearch, Plus, Search } from 'lucide-react';
 import { currentUser } from '@/lib/server/session';
 import { listReviews, type ReviewStatus } from '@/lib/server/reviews';
 import { ReviewRows } from '@/components/app/review-list';
@@ -37,6 +37,9 @@ export default async function HistoryPage({ searchParams }: { searchParams: Prom
     const s = p.toString();
     return `/app/reviews${s ? `?${s}` : ''}`;
   };
+  // The CSV covers everything the current filters match, not just the 50 rows on this page.
+  const exportQuery = new URLSearchParams(Object.entries({ q: q || undefined, status, client: clientId, batch: batchId }).filter((e): e is [string, string] => !!e[1])).toString();
+  const exportHref = `/api/reviews/export${exportQuery ? `?${exportQuery}` : ''}`;
 
   return (
     <div>
@@ -46,7 +49,10 @@ export default async function HistoryPage({ searchParams }: { searchParams: Prom
           {scope && <p className="mt-1 text-[13.5px] text-zinc-600">{scope} · <Link href="/app/reviews" className="font-medium text-brand-700 hover:text-brand-800">Show all reviews</Link></p>}
           <p className="mt-1 text-[14.5px] text-zinc-600">Every review you have run, newest first.</p>
         </div>
-        <ButtonLink href="/app/new" className="hidden sm:inline-flex"><Plus className="size-4" aria-hidden />New review</ButtonLink>
+        <div className="flex shrink-0 items-center gap-2">
+          {reviews.length > 0 && <a href={exportHref} className={buttonClass('secondary', 'sm')}><Download className="size-3.5" aria-hidden />Download CSV</a>}
+          <ButtonLink href="/app/new" className="hidden sm:inline-flex"><Plus className="size-4" aria-hidden />New review</ButtonLink>
+        </div>
       </div>
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
