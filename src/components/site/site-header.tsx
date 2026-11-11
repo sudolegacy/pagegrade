@@ -13,6 +13,7 @@ const LINKS = [
   { href: '/grade', label: 'Free grader' },
   { href: '/sample', label: 'Sample report' },
   { href: '/pricing', label: 'Pricing' },
+  { href: '/agencies', label: 'For agencies' },
   { href: '/blog', label: 'Guides' },
 ];
 
@@ -24,7 +25,7 @@ export function SiteHeader({ sticky = true }: { sticky?: boolean }) {
     <header className={cn('z-40 border-b border-zinc-200/70 bg-canvas/85 backdrop-blur-md', sticky && 'sticky top-0')}>
       <div className="container-page flex h-16 items-center justify-between gap-6">
         <Link href="/" aria-label="PageGrade home" className="shrink-0"><Logo /></Link>
-        <nav aria-label="Main" className="hidden md:block">
+        <nav aria-label="Main" className="hidden lg:block">
           <ul className="flex items-center gap-1 text-[14px] font-medium text-zinc-600">
             {LINKS.map((l) => (
               <li key={l.href}>
@@ -38,7 +39,7 @@ export function SiteHeader({ sticky = true }: { sticky?: boolean }) {
           <Link href="/login" className="hidden rounded-md px-3 py-2 text-[14px] font-medium text-zinc-600 hover:text-ink sm:block">Log in</Link>
           <ButtonLink href="/signup" size="sm" className="h-9 px-3.5">Start free</ButtonLink>
           <D.Root open={open} onOpenChange={setOpen}>
-            <D.Trigger className={buttonClass('ghost', 'sm', 'size-9 px-0 md:hidden')} aria-label="Open menu"><MenuIcon className="size-5" aria-hidden /></D.Trigger>
+            <D.Trigger className={buttonClass('ghost', 'sm', 'size-9 px-0 lg:hidden')} aria-label="Open menu"><MenuIcon className="size-5" aria-hidden /></D.Trigger>
             <D.Portal>
               <D.Overlay className="fixed inset-0 z-50 bg-zinc-950/30 data-[state=open]:animate-fade-in" />
               <D.Content className="fixed inset-x-0 top-0 z-50 rounded-b-2xl border-b border-zinc-200 bg-canvas p-5 shadow-pop data-[state=open]:animate-fade-in">
