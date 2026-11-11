@@ -31,7 +31,7 @@ export function PricingTable() {
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {Object.values(PLANS).map((p) => <PlanCard key={p.id} plan={p} />)}
       </div>
-      <p className="mt-6 text-center text-[13.5px] text-zinc-500">Monthly plans, billed in GBP through Stripe. Change or cancel at any time. Reviews that fail are never counted.</p>
+      <p className="mt-6 text-center text-[13.5px] text-zinc-500">Billed in GBP through Stripe, monthly or yearly. Change or cancel at any time. Reviews that fail are never counted.</p>
     </div>
   );
 }

@@ -22,12 +22,15 @@ export default function PrivacyPage() {
       <p>The pages you submit should be public. If a page shows personal data (for example names in testimonials), it may appear in the screenshots and captured text. We use it only to produce your review.</p>
       <h3>When you pay</h3>
       <p>Payments are handled by Stripe. We do not see or store your full card details. We keep your Stripe customer reference, your plan, its status and renewal date.</p>
+      <h3>When you ask for a prospect pack or a call</h3>
+      <p>Your name, work email address, agency name and website, the public page addresses you ask us to review, and anything you write in the message box. We use them to prepare and send your pack, to reply to you about it and, if you become a customer, to set up your account. We keep them for up to 12 months after our last contact, or until you ask us to delete them.</p>
       <h3>When you use the site</h3>
       <p>A session cookie that keeps you signed in (see our <Link href="/cookies">cookie policy</Link>), the browser type of each signed-in session, and IP addresses used briefly to limit repeated sign-in attempts and other abuse. Our hosting provider also keeps server logs, which include IP addresses, for a limited period. We do not use analytics, advertising or tracking cookies.</p>
 
       <h2>How we use it and our lawful bases</h2>
       <ul>
         <li><strong>To provide the service you signed up for</strong> (contract): running reviews, showing your reports, managing your plan and sending the emails the service needs, such as email verification, password resets and review-ready notifications (which you can turn off in Settings).</li>
+        <li><strong>To help you get value from PageGrade</strong> (legitimate interests): a few short emails after you sign up or upgrade, for example a reminder to run your first review, what the paid plans add once your free reviews are used, and a check-in to ask how it is going. Each is sent at most once, and the Settings email toggle turns them all off.</li>
         <li><strong>To keep PageGrade secure and working</strong> (legitimate interests): preventing abuse and fraud, rate limiting, fixing problems and keeping backups.</li>
         <li><strong>To meet legal obligations</strong> (legal obligation): for example keeping records of payments for tax purposes.</li>
       </ul>
