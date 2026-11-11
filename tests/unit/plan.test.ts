@@ -61,6 +61,8 @@ const FULL_CONFIG = {
   SMTP_USER: 'mailer-user', SMTP_PASS: 'smtp-pass-xyz', ADMIN_EMAILS: 'admin@example.com,demo@example.com', FOUNDER_NAME: 'Sam',
   FOUNDER_ALERT_EMAIL: 'sam.alerts@example.com', APP_URL: 'https://pagegrade.example.org', COMPANY_NUMBER: 'OC987654', COMPANY_ADDRESS: '9 Quiet Lane, Leeds',
   NEXT_PUBLIC_BOOKING_URL: 'https://cal.example.org/sam/15min', AI_DAILY_BUDGET_USD: '1', FREE_GRADER_DAILY_LIMIT: '20',
+  // Explicit, so a REQUIRE_EMAIL_VERIFICATION=false in the ambient environment (CI sets it for the build) cannot leak in.
+  REQUIRE_EMAIL_VERIFICATION: 'true',
 };
 const itemsById = (m: ReturnType<typeof planMetrics>) => Object.fromEntries(m.launch.items.map((i) => [i.id, i]));
 
