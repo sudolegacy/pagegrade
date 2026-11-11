@@ -1,0 +1,2012 @@
+{
+ "config": {
+  "evalModel": "gpt-6-luna",
+  "evalRuns": 3,
+  "evalReasoning": "low",
+  "writeModel": "gpt-6.1-terra",
+  "performance": true,
+  "executablePath": "/usr/local/bin/chromium"
+ },
+ "rows": [
+  {
+   "id": "fx-good-saas",
+   "run": 1,
+   "score": 93,
+   "raw": 93.2,
+   "grade": "A+",
+   "conf": "high",
+   "agree": 1,
+   "adj": 0,
+   "cats": "clar:96 cta:92 trus:97 desi:93 pers:85 mobi:95 tech:94",
+   "caps": "",
+   "issues": 6,
+   "cost": "0.0163",
+   "s": 41
+  },
+  {
+   "id": "fx-good-saas",
+   "run": 2,
+   "score": 95,
+   "raw": 95.2,
+   "grade": "A+",
+   "conf": "high",
+   "agree": 1,
+   "adj": 0,
+   "cats": "clar:96 cta:96 trus:97 desi:100 pers:85 mobi:95 tech:94",
+   "caps": "",
+   "issues": 5,
+   "cost": "0.0157",
+   "s": 28
+  },
+  {
+   "id": "fx-mixed-service",
+   "run": 1,
+   "score": 53,
+   "raw": 52.8,
+   "grade": "D",
+   "conf": "high",
+   "agree": 1,
+   "adj": 1,
+   "cats": "clar:46 cta:54 trus:37 desi:61 pers:36 mobi:95 tech:78",
+   "caps": "",
+   "issues": 7,
+   "cost": "0.0183",
+   "s": 42
+  },
+  {
+   "id": "fx-mixed-service",
+   "run": 2,
+   "score": 51,
+   "raw": 51,
+   "grade": "D",
+   "conf": "high",
+   "agree": 1,
+   "adj": 1,
+   "cats": "clar:46 cta:45 trus:37 desi:61 pers:36 mobi:95 tech:78",
+   "caps": "",
+   "issues": 8,
+   "cost": "0.0184",
+   "s": 34
+  },
+  {
+   "id": "fx-bad-shop",
+   "run": 1,
+   "score": 15,
+   "raw": 15.4,
+   "grade": "F",
+   "conf": "high",
+   "agree": 0.95,
+   "adj": 0,
+   "cats": "clar:15 cta:0 trus:12 desi:27 pers:11 mobi:13 tech:67",
+   "caps": "",
+   "issues": 8,
+   "cost": "0.0188",
+   "s": 46
+  },
+  {
+   "id": "fx-bad-shop",
+   "run": 2,
+   "score": 17,
+   "raw": 17.3,
+   "grade": "F",
+   "conf": "high",
+   "agree": 1,
+   "adj": 0,
+   "cats": "clar:24 cta:0 trus:12 desi:27 pers:11 mobi:13 tech:67",
+   "caps": "",
+   "issues": 8,
+   "cost": "0.0187",
+   "s": 39
+  },
+  {
+   "id": "fx-bad-leadgen",
+   "run": 1,
+   "score": 31,
+   "raw": 31.2,
+   "grade": "F",
+   "conf": "high",
+   "agree": 1,
+   "adj": 0,
+   "cats": "clar:22 cta:37 trus:0 desi:55 pers:12 mobi:75 tech:72",
+   "caps": "",
+   "issues": 8,
+   "cost": "0.0195",
+   "s": 44
+  },
+  {
+   "id": "fx-bad-leadgen",
+   "run": 2,
+   "score": 31,
+   "raw": 31.2,
+   "grade": "F",
+   "conf": "high",
+   "agree": 1,
+   "adj": 0,
+   "cats": "clar:22 cta:37 trus:0 desi:55 pers:12 mobi:75 tech:72",
+   "caps": "",
+   "issues": 7,
+   "cost": "0.0173",
+   "s": 32
+  },
+  {
+   "id": "stripe",
+   "run": 1,
+   "score": 75,
+   "raw": 74.7,
+   "grade": "B",
+   "conf": "high",
+   "agree": 1,
+   "adj": 0,
+   "cats": "clar:68 cta:74 trus:88 desi:79 pers:67 mobi:95 tech:47",
+   "caps": "",
+   "issues": 7,
+   "cost": "0.0215",
+   "s": 114
+  },
+  {
+   "id": "stripe",
+   "run": 2,
+   "score": 73,
+   "raw": 72.9,
+   "grade": "B",
+   "conf": "high",
+   "agree": 1,
+   "adj": 0,
+   "cats": "clar:64 cta:74 trus:83 desi:79 pers:67 mobi:95 tech:47",
+   "caps": "",
+   "issues": 8,
+   "cost": "0.0224",
+   "s": 35
+  },
+  {
+   "id": "linear",
+   "run": 1,
+   "score": 63,
+   "raw": 63.4,
+   "grade": "C",
+   "conf": "high",
+   "agree": 1,
+   "adj": 0,
+   "cats": "clar:67 cta:46 trus:63 desi:77 pers:79 mobi:64 tech:47",
+   "caps": "",
+   "issues": 6,
+   "cost": "0.0207",
+   "s": 55
+  },
+  {
+   "id": "linear",
+   "run": 2,
+   "score": 63,
+   "raw": 63,
+   "grade": "C",
+   "conf": "high",
+   "agree": 1,
+   "adj": 0,
+   "cats": "clar:67 cta:46 trus:63 desi:77 pers:75 mobi:64 tech:47",
+   "caps": "",
+   "issues": 6,
+   "cost": "0.0207",
+   "s": 35
+  },
+  {
+   "id": "basecamp",
+   "run": 1,
+   "score": 71,
+   "raw": 71.2,
+   "grade": "B",
+   "conf": "high",
+   "agree": 1,
+   "adj": 0,
+   "cats": "clar:60 cta:65 trus:67 desi:88 pers:83 mobi:70 tech:86",
+   "caps": "",
+   "issues": 8,
+   "cost": "0.0213",
+   "s": 53
+  },
+  {
+   "id": "basecamp",
+   "run": 2,
+   "score": 70,
+   "raw": 70.2,
+   "grade": "B",
+   "conf": "high",
+   "agree": 1,
+   "adj": 0,
+   "cats": "clar:60 cta:65 trus:67 desi:80 pers:83 mobi:70 tech:86",
+   "caps": "",
+   "issues": 8,
+   "cost": "0.0216",
+   "s": 37
+  },
+  {
+   "id": "gatesnfences",
+   "run": 1,
+   "score": 44,
+   "raw": 44.5,
+   "grade": "D",
+   "conf": "medium",
+   "agree": 1,
+   "adj": 1,
+   "cats": "clar:57 cta:32 trus:23 desi:48 pers:55 mobi:48 tech:67",
+   "caps": "",
+   "issues": 6,
+   "cost": "0.0179",
+   "s": 41
+  },
+  {
+   "id": "gatesnfences",
+   "run": 2,
+   "score": 43,
+   "raw": 43.2,
+   "grade": "D",
+   "conf": "high",
+   "agree": 0.95,
+   "adj": 1,
+   "cats": "clar:57 cta:29 trus:23 desi:43 pers:55 mobi:48 tech:67",
+   "caps": "",
+   "issues": 7,
+   "cost": "0.0185",
+   "s": 33
+  },
+  {
+   "id": "arngren",
+   "run": 1,
+   "score": 35,
+   "raw": 35.4,
+   "grade": "F",
+   "conf": "medium",
+   "agree": 0.95,
+   "adj": 1,
+   "cats": "clar:41 cta:36 trus:15 desi:30 pers:42 mobi:42 tech:58",
+   "caps": "",
+   "issues": 7,
+   "cost": "0.0187",
+   "s": 52
+  },
+  {
+   "id": "arngren",
+   "run": 2,
+   "score": 33,
+   "raw": 32.8,
+   "grade": "F",
+   "conf": "medium",
+   "agree": 1,
+   "adj": 1,
+   "cats": "clar:32 cta:32 trus:15 desi:30 pers:42 mobi:42 tech:58",
+   "caps": "",
+   "issues": 8,
+   "cost": "0.0189",
+   "s": 35
+  }
+ ],
+ "summary": [
+  {
+   "id": "fx-good-saas",
+   "expect": "good",
+   "scores": [
+    93,
+    95
+   ],
+   "categories": {
+    "clarity": [
+     96,
+     96
+    ],
+    "cta": [
+     92,
+     96
+    ],
+    "trust": [
+     97,
+     97
+    ],
+    "design": [
+     93,
+     100
+    ],
+    "persuasion": [
+     85,
+     85
+    ],
+    "mobile": [
+     95,
+     95
+    ],
+    "technical": [
+     94,
+     94
+    ]
+   },
+   "criteria": {
+    "clarity.offer": [
+     4,
+     4
+    ],
+    "clarity.outcome": [
+     4,
+     4
+    ],
+    "clarity.audience": [
+     4,
+     4
+    ],
+    "clarity.support": [
+     3,
+     3
+    ],
+    "clarity.headline_present": [
+     4,
+     4
+    ],
+    "cta.primary_above_fold": [
+     4,
+     4
+    ],
+    "cta.copy": [
+     4,
+     4
+    ],
+    "cta.prominence": [
+     3,
+     4
+    ],
+    "cta.focus": [
+     3,
+     3
+    ],
+    "cta.repetition": [
+     4,
+     4
+    ],
+    "cta.friction": [
+     4,
+     4
+    ],
+    "trust.social_proof": [
+     4,
+     4
+    ],
+    "trust.proof_quality": [
+     4,
+     4
+    ],
+    "trust.proof_placement": [
+     3,
+     3
+    ],
+    "trust.risk_reversal": [
+     4,
+     4
+    ],
+    "trust.legitimacy": [
+     4,
+     4
+    ],
+    "design.hierarchy": [
+     3,
+     4
+    ],
+    "design.scannability": [
+     4,
+     4
+    ],
+    "design.readability": [
+     4,
+     4
+    ],
+    "design.polish": [
+     4,
+     4
+    ],
+    "design.stability": [
+     4,
+     4
+    ],
+    "persuasion.benefits": [
+     4,
+     4
+    ],
+    "persuasion.product_visual": [
+     3,
+     3
+    ],
+    "persuasion.objections": [
+     3,
+     3
+    ],
+    "persuasion.differentiation": [
+     3,
+     3
+    ],
+    "persuasion.readability": [
+     4,
+     4
+    ],
+    "mobile.viewport": [
+     4,
+     4
+    ],
+    "mobile.cta": [
+     4,
+     4
+    ],
+    "mobile.headline": [
+     4,
+     4
+    ],
+    "mobile.tap_targets": [
+     4,
+     4
+    ],
+    "mobile.text": [
+     4,
+     4
+    ],
+    "mobile.layout": [
+     3,
+     3
+    ],
+    "tech.performance": [
+     4,
+     4
+    ],
+    "tech.lcp": [
+     4,
+     4
+    ],
+    "tech.accessibility": [
+     4,
+     4
+    ],
+    "tech.seo": [
+     3,
+     3
+    ]
+   },
+   "costs": [
+    0.016341,
+    0.01565
+   ],
+   "ms": [
+    40558,
+    27874
+   ]
+  },
+  {
+   "id": "fx-mixed-service",
+   "expect": "mixed",
+   "scores": [
+    53,
+    51
+   ],
+   "categories": {
+    "clarity": [
+     46,
+     46
+    ],
+    "cta": [
+     54,
+     45
+    ],
+    "trust": [
+     37,
+     37
+    ],
+    "design": [
+     61,
+     61
+    ],
+    "persuasion": [
+     36,
+     36
+    ],
+    "mobile": [
+     95,
+     95
+    ],
+    "technical": [
+     78,
+     78
+    ]
+   },
+   "criteria": {
+    "clarity.offer": [
+     2,
+     2
+    ],
+    "clarity.outcome": [
+     1,
+     1
+    ],
+    "clarity.audience": [
+     2,
+     2
+    ],
+    "clarity.support": [
+     1,
+     1
+    ],
+    "clarity.headline_present": [
+     4,
+     4
+    ],
+    "cta.primary_above_fold": [
+     4,
+     4
+    ],
+    "cta.copy": [
+     1,
+     1
+    ],
+    "cta.prominence": [
+     2,
+     1
+    ],
+    "cta.focus": [
+     1,
+     0
+    ],
+    "cta.repetition": [
+     null,
+     null
+    ],
+    "cta.friction": [
+     1,
+     1
+    ],
+    "trust.social_proof": [
+     2,
+     2
+    ],
+    "trust.proof_quality": [
+     1,
+     1
+    ],
+    "trust.proof_placement": [
+     2,
+     2
+    ],
+    "trust.risk_reversal": [
+     0,
+     0
+    ],
+    "trust.legitimacy": [
+     2,
+     2
+    ],
+    "design.hierarchy": [
+     2,
+     2
+    ],
+    "design.scannability": [
+     2,
+     2
+    ],
+    "design.readability": [
+     3,
+     3
+    ],
+    "design.polish": [
+     2,
+     2
+    ],
+    "design.stability": [
+     4,
+     4
+    ],
+    "persuasion.benefits": [
+     2,
+     2
+    ],
+    "persuasion.product_visual": [
+     0,
+     0
+    ],
+    "persuasion.objections": [
+     0,
+     0
+    ],
+    "persuasion.differentiation": [
+     1,
+     1
+    ],
+    "persuasion.readability": [
+     4,
+     4
+    ],
+    "mobile.viewport": [
+     4,
+     4
+    ],
+    "mobile.cta": [
+     4,
+     4
+    ],
+    "mobile.headline": [
+     4,
+     4
+    ],
+    "mobile.tap_targets": [
+     4,
+     4
+    ],
+    "mobile.text": [
+     4,
+     4
+    ],
+    "mobile.layout": [
+     3,
+     3
+    ],
+    "tech.performance": [
+     4,
+     4
+    ],
+    "tech.lcp": [
+     4,
+     4
+    ],
+    "tech.accessibility": [
+     2,
+     2
+    ],
+    "tech.seo": [
+     2,
+     2
+    ]
+   },
+   "costs": [
+    0.018316,
+    0.018387
+   ],
+   "ms": [
+    41529,
+    33841
+   ]
+  },
+  {
+   "id": "fx-bad-shop",
+   "expect": "bad",
+   "scores": [
+    15,
+    17
+   ],
+   "categories": {
+    "clarity": [
+     15,
+     24
+    ],
+    "cta": [
+     0,
+     0
+    ],
+    "trust": [
+     12,
+     12
+    ],
+    "design": [
+     27,
+     27
+    ],
+    "persuasion": [
+     11,
+     11
+    ],
+    "mobile": [
+     13,
+     13
+    ],
+    "technical": [
+     67,
+     67
+    ]
+   },
+   "criteria": {
+    "clarity.offer": [
+     1,
+     2
+    ],
+    "clarity.outcome": [
+     0,
+     0
+    ],
+    "clarity.audience": [
+     1,
+     1
+    ],
+    "clarity.support": [
+     0,
+     0
+    ],
+    "clarity.headline_present": [
+     1,
+     1
+    ],
+    "cta.primary_above_fold": [
+     0,
+     0
+    ],
+    "cta.copy": [
+     0,
+     0
+    ],
+    "cta.prominence": [
+     0,
+     0
+    ],
+    "cta.focus": [
+     0,
+     0
+    ],
+    "cta.repetition": [
+     null,
+     null
+    ],
+    "cta.friction": [
+     0,
+     0
+    ],
+    "trust.social_proof": [
+     0,
+     0
+    ],
+    "trust.proof_quality": [
+     0,
+     0
+    ],
+    "trust.proof_placement": [
+     0,
+     0
+    ],
+    "trust.risk_reversal": [
+     1,
+     1
+    ],
+    "trust.legitimacy": [
+     2,
+     2
+    ],
+    "design.hierarchy": [
+     1,
+     1
+    ],
+    "design.scannability": [
+     1,
+     1
+    ],
+    "design.readability": [
+     0,
+     0
+    ],
+    "design.polish": [
+     0,
+     0
+    ],
+    "design.stability": [
+     4,
+     4
+    ],
+    "persuasion.benefits": [
+     1,
+     1
+    ],
+    "persuasion.product_visual": [
+     0,
+     0
+    ],
+    "persuasion.objections": [
+     0,
+     0
+    ],
+    "persuasion.differentiation": [
+     1,
+     1
+    ],
+    "persuasion.readability": [
+     null,
+     null
+    ],
+    "mobile.viewport": [
+     0,
+     0
+    ],
+    "mobile.cta": [
+     0,
+     0
+    ],
+    "mobile.headline": [
+     2,
+     2
+    ],
+    "mobile.tap_targets": [
+     null,
+     null
+    ],
+    "mobile.text": [
+     0,
+     0
+    ],
+    "mobile.layout": [
+     1,
+     1
+    ],
+    "tech.performance": [
+     4,
+     4
+    ],
+    "tech.lcp": [
+     4,
+     4
+    ],
+    "tech.accessibility": [
+     1,
+     1
+    ],
+    "tech.seo": [
+     1,
+     1
+    ]
+   },
+   "costs": [
+    0.018826,
+    0.018673
+   ],
+   "ms": [
+    46143,
+    39148
+   ]
+  },
+  {
+   "id": "fx-bad-leadgen",
+   "expect": "bad",
+   "scores": [
+    31,
+    31
+   ],
+   "categories": {
+    "clarity": [
+     22,
+     22
+    ],
+    "cta": [
+     37,
+     37
+    ],
+    "trust": [
+     0,
+     0
+    ],
+    "design": [
+     55,
+     55
+    ],
+    "persuasion": [
+     12,
+     12
+    ],
+    "mobile": [
+     75,
+     75
+    ],
+    "technical": [
+     72,
+     72
+    ]
+   },
+   "criteria": {
+    "clarity.offer": [
+     1,
+     1
+    ],
+    "clarity.outcome": [
+     0,
+     0
+    ],
+    "clarity.audience": [
+     1,
+     1
+    ],
+    "clarity.support": [
+     1,
+     1
+    ],
+    "clarity.headline_present": [
+     2,
+     2
+    ],
+    "cta.primary_above_fold": [
+     3,
+     3
+    ],
+    "cta.copy": [
+     0,
+     0
+    ],
+    "cta.prominence": [
+     1,
+     1
+    ],
+    "cta.focus": [
+     3,
+     3
+    ],
+    "cta.repetition": [
+     null,
+     null
+    ],
+    "cta.friction": [
+     0,
+     0
+    ],
+    "trust.social_proof": [
+     0,
+     0
+    ],
+    "trust.proof_quality": [
+     0,
+     0
+    ],
+    "trust.proof_placement": [
+     0,
+     0
+    ],
+    "trust.risk_reversal": [
+     0,
+     0
+    ],
+    "trust.legitimacy": [
+     0,
+     0
+    ],
+    "design.hierarchy": [
+     2,
+     2
+    ],
+    "design.scannability": [
+     1,
+     1
+    ],
+    "design.readability": [
+     3,
+     3
+    ],
+    "design.polish": [
+     2,
+     2
+    ],
+    "design.stability": [
+     4,
+     4
+    ],
+    "persuasion.benefits": [
+     1,
+     1
+    ],
+    "persuasion.product_visual": [
+     0,
+     0
+    ],
+    "persuasion.objections": [
+     0,
+     0
+    ],
+    "persuasion.differentiation": [
+     1,
+     1
+    ],
+    "persuasion.readability": [
+     null,
+     null
+    ],
+    "mobile.viewport": [
+     4,
+     4
+    ],
+    "mobile.cta": [
+     4,
+     4
+    ],
+    "mobile.headline": [
+     4,
+     4
+    ],
+    "mobile.tap_targets": [
+     0,
+     0
+    ],
+    "mobile.text": [
+     3,
+     3
+    ],
+    "mobile.layout": [
+     2,
+     2
+    ],
+    "tech.performance": [
+     4,
+     4
+    ],
+    "tech.lcp": [
+     4,
+     4
+    ],
+    "tech.accessibility": [
+     1,
+     1
+    ],
+    "tech.seo": [
+     2,
+     2
+    ]
+   },
+   "costs": [
+    0.019471,
+    0.017276
+   ],
+   "ms": [
+    43865,
+    32237
+   ]
+  },
+  {
+   "id": "stripe",
+   "expect": "good",
+   "scores": [
+    75,
+    73
+   ],
+   "categories": {
+    "clarity": [
+     68,
+     64
+    ],
+    "cta": [
+     74,
+     74
+    ],
+    "trust": [
+     88,
+     83
+    ],
+    "design": [
+     79,
+     79
+    ],
+    "persuasion": [
+     67,
+     67
+    ],
+    "mobile": [
+     95,
+     95
+    ],
+    "technical": [
+     47,
+     47
+    ]
+   },
+   "criteria": {
+    "clarity.offer": [
+     3,
+     3
+    ],
+    "clarity.outcome": [
+     2,
+     2
+    ],
+    "clarity.audience": [
+     2,
+     2
+    ],
+    "clarity.support": [
+     3,
+     2
+    ],
+    "clarity.headline_present": [
+     4,
+     4
+    ],
+    "cta.primary_above_fold": [
+     4,
+     4
+    ],
+    "cta.copy": [
+     2,
+     2
+    ],
+    "cta.prominence": [
+     3,
+     3
+    ],
+    "cta.focus": [
+     2,
+     2
+    ],
+    "cta.repetition": [
+     4,
+     4
+    ],
+    "cta.friction": [
+     2,
+     2
+    ],
+    "trust.social_proof": [
+     4,
+     4
+    ],
+    "trust.proof_quality": [
+     4,
+     3
+    ],
+    "trust.proof_placement": [
+     3,
+     3
+    ],
+    "trust.risk_reversal": [
+     2,
+     2
+    ],
+    "trust.legitimacy": [
+     4,
+     4
+    ],
+    "design.hierarchy": [
+     3,
+     3
+    ],
+    "design.scannability": [
+     3,
+     3
+    ],
+    "design.readability": [
+     3,
+     3
+    ],
+    "design.polish": [
+     3,
+     3
+    ],
+    "design.stability": [
+     4,
+     4
+    ],
+    "persuasion.benefits": [
+     3,
+     3
+    ],
+    "persuasion.product_visual": [
+     3,
+     3
+    ],
+    "persuasion.objections": [
+     2,
+     2
+    ],
+    "persuasion.differentiation": [
+     2,
+     2
+    ],
+    "persuasion.readability": [
+     3,
+     3
+    ],
+    "mobile.viewport": [
+     4,
+     4
+    ],
+    "mobile.cta": [
+     4,
+     4
+    ],
+    "mobile.headline": [
+     4,
+     4
+    ],
+    "mobile.tap_targets": [
+     4,
+     4
+    ],
+    "mobile.text": [
+     4,
+     4
+    ],
+    "mobile.layout": [
+     3,
+     3
+    ],
+    "tech.performance": [
+     1,
+     1
+    ],
+    "tech.lcp": [
+     0,
+     0
+    ],
+    "tech.accessibility": [
+     4,
+     4
+    ],
+    "tech.seo": [
+     3,
+     3
+    ]
+   },
+   "costs": [
+    0.021492,
+    0.022425
+   ],
+   "ms": [
+    114212,
+    35247
+   ]
+  },
+  {
+   "id": "linear",
+   "expect": "good",
+   "scores": [
+    63,
+    63
+   ],
+   "categories": {
+    "clarity": [
+     67,
+     67
+    ],
+    "cta": [
+     46,
+     46
+    ],
+    "trust": [
+     63,
+     63
+    ],
+    "design": [
+     77,
+     77
+    ],
+    "persuasion": [
+     79,
+     75
+    ],
+    "mobile": [
+     64,
+     64
+    ],
+    "technical": [
+     47,
+     47
+    ]
+   },
+   "criteria": {
+    "clarity.offer": [
+     3,
+     3
+    ],
+    "clarity.outcome": [
+     1,
+     1
+    ],
+    "clarity.audience": [
+     3,
+     3
+    ],
+    "clarity.support": [
+     3,
+     3
+    ],
+    "clarity.headline_present": [
+     4,
+     4
+    ],
+    "cta.primary_above_fold": [
+     2,
+     2
+    ],
+    "cta.copy": [
+     1,
+     1
+    ],
+    "cta.prominence": [
+     2,
+     2
+    ],
+    "cta.focus": [
+     2,
+     2
+    ],
+    "cta.repetition": [
+     2,
+     2
+    ],
+    "cta.friction": [
+     2,
+     2
+    ],
+    "trust.social_proof": [
+     3,
+     3
+    ],
+    "trust.proof_quality": [
+     3,
+     3
+    ],
+    "trust.proof_placement": [
+     2,
+     2
+    ],
+    "trust.risk_reversal": [
+     0,
+     0
+    ],
+    "trust.legitimacy": [
+     4,
+     4
+    ],
+    "design.hierarchy": [
+     3,
+     3
+    ],
+    "design.scannability": [
+     4,
+     4
+    ],
+    "design.readability": [
+     1,
+     1
+    ],
+    "design.polish": [
+     3,
+     3
+    ],
+    "design.stability": [
+     4,
+     4
+    ],
+    "persuasion.benefits": [
+     3,
+     3
+    ],
+    "persuasion.product_visual": [
+     4,
+     4
+    ],
+    "persuasion.objections": [
+     1,
+     1
+    ],
+    "persuasion.differentiation": [
+     3,
+     2
+    ],
+    "persuasion.readability": [
+     4,
+     4
+    ],
+    "mobile.viewport": [
+     4,
+     4
+    ],
+    "mobile.cta": [
+     2,
+     2
+    ],
+    "mobile.headline": [
+     4,
+     4
+    ],
+    "mobile.tap_targets": [
+     0,
+     0
+    ],
+    "mobile.text": [
+     1,
+     1
+    ],
+    "mobile.layout": [
+     3,
+     3
+    ],
+    "tech.performance": [
+     1,
+     1
+    ],
+    "tech.lcp": [
+     0,
+     0
+    ],
+    "tech.accessibility": [
+     3,
+     3
+    ],
+    "tech.seo": [
+     4,
+     4
+    ]
+   },
+   "costs": [
+    0.020722,
+    0.02065
+   ],
+   "ms": [
+    55222,
+    35246
+   ]
+  },
+  {
+   "id": "basecamp",
+   "expect": "good",
+   "scores": [
+    71,
+    70
+   ],
+   "categories": {
+    "clarity": [
+     60,
+     60
+    ],
+    "cta": [
+     65,
+     65
+    ],
+    "trust": [
+     67,
+     67
+    ],
+    "design": [
+     88,
+     80
+    ],
+    "persuasion": [
+     83,
+     83
+    ],
+    "mobile": [
+     70,
+     70
+    ],
+    "technical": [
+     86,
+     86
+    ]
+   },
+   "criteria": {
+    "clarity.offer": [
+     3,
+     3
+    ],
+    "clarity.outcome": [
+     2,
+     2
+    ],
+    "clarity.audience": [
+     2,
+     2
+    ],
+    "clarity.support": [
+     1,
+     1
+    ],
+    "clarity.headline_present": [
+     4,
+     4
+    ],
+    "cta.primary_above_fold": [
+     3,
+     3
+    ],
+    "cta.copy": [
+     3,
+     3
+    ],
+    "cta.prominence": [
+     3,
+     3
+    ],
+    "cta.focus": [
+     2,
+     2
+    ],
+    "cta.repetition": [
+     2,
+     2
+    ],
+    "cta.friction": [
+     2,
+     2
+    ],
+    "trust.social_proof": [
+     3,
+     3
+    ],
+    "trust.proof_quality": [
+     3,
+     3
+    ],
+    "trust.proof_placement": [
+     2,
+     2
+    ],
+    "trust.risk_reversal": [
+     2,
+     2
+    ],
+    "trust.legitimacy": [
+     3,
+     3
+    ],
+    "design.hierarchy": [
+     3,
+     2
+    ],
+    "design.scannability": [
+     3,
+     3
+    ],
+    "design.readability": [
+     4,
+     4
+    ],
+    "design.polish": [
+     4,
+     4
+    ],
+    "design.stability": [
+     4,
+     4
+    ],
+    "persuasion.benefits": [
+     3,
+     3
+    ],
+    "persuasion.product_visual": [
+     4,
+     4
+    ],
+    "persuasion.objections": [
+     3,
+     3
+    ],
+    "persuasion.differentiation": [
+     3,
+     3
+    ],
+    "persuasion.readability": [
+     3,
+     3
+    ],
+    "mobile.viewport": [
+     4,
+     4
+    ],
+    "mobile.cta": [
+     4,
+     4
+    ],
+    "mobile.headline": [
+     4,
+     4
+    ],
+    "mobile.tap_targets": [
+     0,
+     0
+    ],
+    "mobile.text": [
+     0,
+     0
+    ],
+    "mobile.layout": [
+     3,
+     3
+    ],
+    "tech.performance": [
+     3,
+     3
+    ],
+    "tech.lcp": [
+     4,
+     4
+    ],
+    "tech.accessibility": [
+     4,
+     4
+    ],
+    "tech.seo": [
+     3,
+     3
+    ]
+   },
+   "costs": [
+    0.02125,
+    0.021617
+   ],
+   "ms": [
+    53399,
+    36716
+   ]
+  },
+  {
+   "id": "gatesnfences",
+   "expect": "bad",
+   "scores": [
+    44,
+    43
+   ],
+   "categories": {
+    "clarity": [
+     57,
+     57
+    ],
+    "cta": [
+     32,
+     29
+    ],
+    "trust": [
+     23,
+     23
+    ],
+    "design": [
+     48,
+     43
+    ],
+    "persuasion": [
+     55,
+     55
+    ],
+    "mobile": [
+     48,
+     48
+    ],
+    "technical": [
+     67,
+     67
+    ]
+   },
+   "criteria": {
+    "clarity.offer": [
+     3,
+     3
+    ],
+    "clarity.outcome": [
+     2,
+     2
+    ],
+    "clarity.audience": [
+     2,
+     2
+    ],
+    "clarity.support": [
+     1,
+     1
+    ],
+    "clarity.headline_present": [
+     3,
+     3
+    ],
+    "cta.primary_above_fold": [
+     3,
+     3
+    ],
+    "cta.copy": [
+     0,
+     0
+    ],
+    "cta.prominence": [
+     1,
+     1
+    ],
+    "cta.focus": [
+     0,
+     0
+    ],
+    "cta.repetition": [
+     1,
+     1
+    ],
+    "cta.friction": [
+     1,
+     0
+    ],
+    "trust.social_proof": [
+     1,
+     1
+    ],
+    "trust.proof_quality": [
+     1,
+     1
+    ],
+    "trust.proof_placement": [
+     0,
+     0
+    ],
+    "trust.risk_reversal": [
+     0,
+     0
+    ],
+    "trust.legitimacy": [
+     3,
+     3
+    ],
+    "design.hierarchy": [
+     1,
+     1
+    ],
+    "design.scannability": [
+     2,
+     2
+    ],
+    "design.readability": [
+     3,
+     3
+    ],
+    "design.polish": [
+     1,
+     0
+    ],
+    "design.stability": [
+     4,
+     4
+    ],
+    "persuasion.benefits": [
+     2,
+     2
+    ],
+    "persuasion.product_visual": [
+     3,
+     3
+    ],
+    "persuasion.objections": [
+     2,
+     2
+    ],
+    "persuasion.differentiation": [
+     1,
+     1
+    ],
+    "persuasion.readability": [
+     2,
+     2
+    ],
+    "mobile.viewport": [
+     0,
+     0
+    ],
+    "mobile.cta": [
+     4,
+     4
+    ],
+    "mobile.headline": [
+     4,
+     4
+    ],
+    "mobile.tap_targets": [
+     0,
+     0
+    ],
+    "mobile.text": [
+     4,
+     4
+    ],
+    "mobile.layout": [
+     1,
+     1
+    ],
+    "tech.performance": [
+     4,
+     4
+    ],
+    "tech.lcp": [
+     3,
+     3
+    ],
+    "tech.accessibility": [
+     1,
+     1
+    ],
+    "tech.seo": [
+     2,
+     2
+    ]
+   },
+   "costs": [
+    0.017901,
+    0.018477
+   ],
+   "ms": [
+    41301,
+    33003
+   ]
+  },
+  {
+   "id": "arngren",
+   "expect": "bad",
+   "scores": [
+    35,
+    33
+   ],
+   "categories": {
+    "clarity": [
+     41,
+     32
+    ],
+    "cta": [
+     36,
+     32
+    ],
+    "trust": [
+     15,
+     15
+    ],
+    "design": [
+     30,
+     30
+    ],
+    "persuasion": [
+     42,
+     42
+    ],
+    "mobile": [
+     42,
+     42
+    ],
+    "technical": [
+     58,
+     58
+    ]
+   },
+   "criteria": {
+    "clarity.offer": [
+     3,
+     2
+    ],
+    "clarity.outcome": [
+     0,
+     0
+    ],
+    "clarity.audience": [
+     1,
+     1
+    ],
+    "clarity.support": [
+     0,
+     0
+    ],
+    "clarity.headline_present": [
+     4,
+     4
+    ],
+    "cta.primary_above_fold": [
+     3,
+     3
+    ],
+    "cta.copy": [
+     0,
+     0
+    ],
+    "cta.prominence": [
+     1,
+     1
+    ],
+    "cta.focus": [
+     0,
+     0
+    ],
+    "cta.repetition": [
+     1,
+     1
+    ],
+    "cta.friction": [
+     2,
+     1
+    ],
+    "trust.social_proof": [
+     0,
+     0
+    ],
+    "trust.proof_quality": [
+     0,
+     0
+    ],
+    "trust.proof_placement": [
+     2,
+     2
+    ],
+    "trust.risk_reversal": [
+     1,
+     1
+    ],
+    "trust.legitimacy": [
+     1,
+     1
+    ],
+    "design.hierarchy": [
+     0,
+     0
+    ],
+    "design.scannability": [
+     1,
+     1
+    ],
+    "design.readability": [
+     3,
+     3
+    ],
+    "design.polish": [
+     0,
+     0
+    ],
+    "design.stability": [
+     4,
+     4
+    ],
+    "persuasion.benefits": [
+     1,
+     1
+    ],
+    "persuasion.product_visual": [
+     3,
+     3
+    ],
+    "persuasion.objections": [
+     1,
+     1
+    ],
+    "persuasion.differentiation": [
+     0,
+     0
+    ],
+    "persuasion.readability": [
+     2,
+     2
+    ],
+    "mobile.viewport": [
+     0,
+     0
+    ],
+    "mobile.cta": [
+     4,
+     4
+    ],
+    "mobile.headline": [
+     4,
+     4
+    ],
+    "mobile.tap_targets": [
+     null,
+     null
+    ],
+    "mobile.text": [
+     null,
+     null
+    ],
+    "mobile.layout": [
+     0,
+     0
+    ],
+    "tech.performance": [
+     3,
+     3
+    ],
+    "tech.lcp": [
+     3,
+     3
+    ],
+    "tech.accessibility": [
+     1,
+     1
+    ],
+    "tech.seo": [
+     2,
+     2
+    ]
+   },
+   "costs": [
+    0.018746,
+    0.018926
+   ],
+   "ms": [
+    52474,
+    34786
+   ]
+  }
+ ]
+}

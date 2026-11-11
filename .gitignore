@@ -1,0 +1,15 @@
+node_modules/
+.next/
+dist/
+.data/
+.data-*/
+.tmp/
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+next-env.d.ts
+test-results/
+playwright-report/
+bench/results/*
+!bench/results/2026-11-06T00-18-08-350Z-gpt-6-luna-r3-low.json

@@ -1,0 +1,99 @@
+PageGrade Outreach Autopilot: setup
+===================================
+
+What's in this zip
+- Code.gs: the script. You paste it into the sheet's Apps Script editor.
+- Outreach-Autopilot-template.xlsx: the sheet (Start here, Prospects, Settings, Do not contact, Log, Dashboard).
+- SETUP.txt: this file.
+
+It costs nothing. It runs on Google Sheets and Apps Script, inside your own Google account,
+and sends from the Gmail account that owns the sheet.
+
+
+Set up (about 15 minutes)
+-------------------------
+1.  Use a separate Gmail account for outreach, under your real name. Not the account PageGrade
+    sends its own emails from, so a problem with outreach can't affect the app's emails.
+2.  Upload the .xlsx file to Google Drive in that account. Open it with Google Sheets, then
+    File > Save as Google Sheets.
+3.  Extensions > Apps Script. Delete the sample code, paste everything from Code.gs, click Save.
+4.  Recommended: in Apps Script, click + next to Services, choose Gmail API, click Add.
+    Follow-ups then stay in the same email thread. Without it they arrive as a new email
+    starting with "Re:".
+5.  Reload the sheet. An Outreach menu appears. The first time you use it, Google asks for
+    permission. Because it's your own script, Google shows a warning: click Advanced, then
+    Go to the project.
+6.  Fill in the yellow cells on the Settings tab (your name, company line with the registered
+    name, number and where it's registered, registered office address, sample report link,
+    privacy link). Add a short section to your privacy page about outreach: where
+    you find business contacts (company websites and directories), why (legitimate interests),
+    how long you keep them, and how to opt out. Read the email templates and change them to
+    sound like you.
+7.  Delete the two example rows on Prospects. Add real prospects: Company, Website, City, Niche
+    and Track (Agency, Owner or Partner). For Owner rows, also paste the Fixes and the Report
+    link from PageGrade's "Email the fixes" (do owner reviews in your main account).
+8.  Outreach > Find emails for new rows. Check each row: right business, a UK limited company,
+    LLP or public body, or a US business, and a real address. Then set OK to email to Yes.
+9.  Outreach > Preview next email, then Outreach > Send a test email to me. Read it on your phone.
+10. Outreach > Start autopilot.
+
+
+What it does on its own
+-----------------------
+- Every hour during your sending hours (default 9:00 to 17:00, weekdays), it checks for
+  replies, sends follow-ups that are due, then sends new emails, up to your daily limit
+  (default 10 a day, follow-ups included). It spreads the day's emails across the hours.
+- Follow-ups: up to 2, 4 days apart.
+- It stops emailing someone as soon as they reply (row turns yellow), opt out (grey, and they
+  go on the Do not contact tab) or bounce (red). Out-of-office replies are ignored. Replies that
+  arrive up to 45 days after the last follow-up are still caught.
+- It never emails a row unless OK to email is Yes. It never emails the same address twice, and
+  only one person per company domain (free addresses such as Gmail or Outlook excepted).
+- If a row is missing something its template needs (for example the report link), the row waits
+  and the Script note says what to fill in. It sends on its own once you fill it in.
+- It keeps a Log and a Dashboard (contacted, replies, opt-outs, bounces and rates).
+
+
+The Outreach menu
+-----------------
+- Find emails for new rows: for each row with a website but no email, it visits the home,
+  contact and about pages, fills in a contact email on the company's own domain, and notes any
+  company number it sees (confirm it on Companies House). Up to 40 rows per run: run it again
+  for more. It respects robots.txt. It never sets OK to email.
+- Preview next email / Send a test email to me: the test goes only to you and changes nothing.
+- Send next batch now: sends now, even outside sending hours or when Paused, but never over
+  the daily limit.
+- Check replies now.
+- Start autopilot / Stop autopilot. To pause for a while, set Paused to Yes in Settings.
+
+
+Rules (important)
+-----------------
+- Only set OK to email to Yes for UK limited companies, LLPs and public bodies, or US
+  businesses. UK sole traders and most partnerships need consent first. Skip the EU and other
+  countries unless you've checked their rules.
+- Keep the footer: your name, company, registered office address, privacy link and the
+  opt-out line.
+- Never remove anyone from Do not contact. You can add a whole domain, like @example.co.uk.
+- Raise the daily limit slowly: 10 a day in week 1, 20 in week 2, then up to 30. Never more
+  than 30 a day from one mailbox. Keep emails plain, with one link and no attachments.
+- If bounces go over 3% or opt-outs over 2%, pause and fix your lists or your emails.
+- If you use more than one mailbox, give each its own copy of this sheet with a different set of
+  prospects (for example UK and US), and copy new opt-outs into every copy each week.
+
+
+Google's limits
+---------------
+- Free Gmail accounts can email about 100 people a day from scripts (Google Workspace: 1,500).
+- Scripts run by the hourly trigger can use about 90 minutes a day on free accounts (6 hours on
+  Workspace). A normal run takes well under a minute.
+
+
+If something goes wrong
+-----------------------
+- "The Prospects tab is missing these columns": don't rename or delete the Prospects headers.
+- Nothing sends: check that OK to email is Yes, Paused is No, it's inside your sending hours,
+  the daily limit isn't used up, and read the row's Script note.
+- Follow-ups arrive as separate emails: add the Gmail API service (step 4).
+- Google emails you about a failed run: open Apps Script > Executions to see the message.
+- To stop everything at once: Outreach > Stop autopilot.
