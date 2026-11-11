@@ -6,7 +6,7 @@ import { POSTS } from '@/content/blog';
 export function SiteFooter() {
   const year = new Date().getFullYear();
   const columns = [
-    { title: 'Product', links: [{ href: '/#how-it-works', label: 'How it works' }, { href: '/grade', label: 'Free page grader' }, { href: '/sample', label: 'Sample report' }, { href: '/pricing', label: 'Pricing' }, { href: '/signup', label: 'Create an account' }, { href: '/login', label: 'Log in' }] },
+    { title: 'Product', links: [{ href: '/#how-it-works', label: 'How it works' }, { href: '/grade', label: 'Free page grader' }, { href: '/sample', label: 'Sample report' }, { href: '/pricing', label: 'Pricing' }, { href: '/agencies', label: 'For agencies' }, { href: '/signup', label: 'Create an account' }, { href: '/login', label: 'Log in' }] },
     { title: 'Guides', links: [...POSTS.slice(0, 4).map((p) => ({ href: `/blog/${p.slug}`, label: p.shortTitle })), { href: '/blog', label: 'All guides' }] },
     { title: 'Company', links: [{ href: `mailto:${SITE.supportEmail}`, label: 'Contact support' }, { href: '/partners', label: 'Partner programme' }, { href: '/terms', label: 'Terms of service' }, { href: '/privacy', label: 'Privacy policy' }, { href: '/cookies', label: 'Cookie policy' }] },
   ];
