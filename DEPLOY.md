@@ -16,7 +16,10 @@ Copy `.env.example` locally; never commit it with real values. In Railway, enter
 | `OPENAI_API_KEY` | Required for review analysis. The account must have access to the selected models. |
 | `AI_MODEL_EVAL`, `AI_MODEL_WRITE` | Defaults are `gpt-6-luna` and `gpt-6.1-terra`. Confirm these model IDs are available to your account; the OpenAI endpoint is used. `AI_MODEL_WRITE=none` disables the separate writing call. |
 | `AI_EVAL_RUNS`, `AI_EVAL_REASONING` | Evaluation runs default to 3 (1–5); reasoning defaults to `low`. |
-| `AI_DAILY_BUDGET_USD` | Estimated, soft daily guard (default 25); not a provider spending cap. Set provider-side billing limits and alerts. Costs of failed jobs/retries and unknown models can be omitted; concurrent work can overshoot. Built-in model prices may become stale. |
+| `AI_DAILY_BUDGET_USD` | Estimated, soft daily guard (default 25; the business plan starts at **1**, about 50 reviews a day); not a provider spending cap. Reaching it pauses every review, including paying customers', until midnight UTC, so raise it as customers arrive (about $0.30 a day per Agency customer). Set provider-side billing limits and alerts. Costs of failed jobs/retries and unknown models can be omitted; concurrent work can overshoot. Built-in model prices may become stale. |
+| `FREE_GRADER_PER_IP`, `FREE_GRADER_DAILY_LIMIT` | Free grader limits per visitor and in total per day (defaults 3 and 150; the business plan starts at 3 and **20**). |
+| `FOUNDER_NAME`, `FOUNDER_ALERT_EMAIL` | Your name signs the welcome and lifecycle emails. Sign-up alerts, prospect-pack requests and the weekly digest go to `FOUNDER_ALERT_EMAIL`, or to the first `ADMIN_EMAILS` entry when unset. |
+| `NEXT_PUBLIC_BOOKING_URL` | Public booking link for the 15-minute agency call (Cal.com is free). Shown on `/agencies` and in the Agency onboarding email; baked into the build. |
 | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Matching-mode Stripe secret and webhook signing secret. Needed for paid billing and webhooks. |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_SECURE` | SMTP service credentials; 587 with STARTTLS is typical, 465 uses secure TLS. Use a provider-approved sender. |
 | `EMAIL_FROM`, `SUPPORT_EMAIL` | Sender and contact email; defaults to PageGrade / pagegrade1@gmail.com. |
@@ -66,6 +69,16 @@ The worker uses SQLite's online backup API approximately daily and retains the n
 - **Free grader limits.** `FREE_GRADER_PER_IP` (default 3 a day per visitor) and `FREE_GRADER_DAILY_LIMIT` (default 150 a day in total) cap AI spend at roughly $3 a day.
 - **Monitoring** runs in the worker. Every 10 minutes it queues the weekly re-checks that are due. Each check is a full review and costs about the same.
 - **Partner programme.** `REFERRAL_PERCENT`, `REFERRAL_MONTHS` and `REFERRAL_PAYOUT_MIN_GBP` (defaults 30, 12 and 50). Payouts are manual: Admin → Partners, pay by bank transfer, then Mark paid.
+
+## v2.2 launch release
+
+- **Admin → Business plan** (`/admin/plan`) holds the whole business and marketing plan next to the live numbers: MRR against the dated checkpoints, the launch checklist (computed from which variables are set, never their values), the lead pipeline, the outreach templates and the weekly routine. Open it first after deploying; every red item on the checklist is something to fix before taking payments.
+- **Agencies page** (`/agencies`) is the landing page for the plan's main offer: three free branded audits. Its form records a lead and emails `FOUNDER_ALERT_EMAIL`. Reply within one working day: run the three pages through Bulk review in a client folder, download the branded PDFs and reply in the same thread.
+- **Founder emails.** Every sign-up and pack request sends an alert; the worker sends a digest every seven days. Both need SMTP.
+- **Lifecycle emails** run daily in the worker: first-review nudge (day 2), free reviews used, Agency onboarding (day 1), check-ins (days 7 and 25). Each kind is sent at most once per user and recorded in `lifecycle_emails`; at most 50 go out per run.
+- **CSV export** of review results is available from History and client folders (`/api/reviews/export`).
+- **Database.** Migration 3 adds `leads` and `lifecycle_emails`; it runs automatically on start. Take a backup before the first deploy of this version as usual.
+- **Continuous integration.** `.github/workflows/ci.yml` runs the type check, unit tests and build on every pull request.
 
 ## Known limits
 

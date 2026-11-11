@@ -62,7 +62,7 @@ export function SettingsForms({ account }: { account: AccountView }) {
       <Section title="Notifications" description="We only email you about your own reviews and account.">
         <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-zinc-200 bg-white p-4 shadow-card">
           <input type="checkbox" className="mt-0.5 size-4 accent-brand-600" checked={notify} onChange={(e) => toggleNotify(e.target.checked)} />
-          <span><span className="block text-[14px] font-medium text-ink">Email me when a review finishes</span><span className="mt-0.5 block text-[13px] text-zinc-500">Includes the score and a link to the report, or why it could not be completed.</span></span>
+          <span><span className="block text-[14px] font-medium text-ink">Email me when a review finishes</span><span className="mt-0.5 block text-[13px] text-zinc-500">Includes the score and a link to the report, or why it could not be completed. Also covers the occasional tip or check-in from us.</span></span>
         </label>
       </Section>
 

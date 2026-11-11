@@ -5,6 +5,7 @@ import { SIGNED_IN, logIn, signUp, uniqueEmail, watchConsole } from './helpers';
 const PUBLIC_PAGES: [string, RegExp][] = [
   ['/', /landing page/i],
   ['/pricing', /pricing|plan/i],
+  ['/agencies', /free audits/i],
   ['/sample', /./],
   ['/blog', /guides|landing page/i],
   ...POSTS.map((p) => [`/blog/${p.slug}`, new RegExp(p.title.slice(0, 20).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')] as [string, RegExp]),

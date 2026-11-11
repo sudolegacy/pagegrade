@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     page('', iso(latestPost), 1, 'weekly'),
     page('/pricing', iso(latestPost), 0.8),
+    page('/agencies', iso(latestPost), 0.8),
     page('/sample', iso(latestPost), 0.7),
     page('/grade', iso(latestPost), 0.9),
     page('/partners', iso(latestPost), 0.5),
