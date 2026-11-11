@@ -213,6 +213,14 @@ export default function HomePage() {
             Every plan includes the full report. Paid plans add more reviews each month.
           </SectionIntro>
           <div className="mt-12"><PricingTable /></div>
+          <section aria-labelledby="home-agencies" className="card mx-auto mt-12 flex max-w-4xl flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:p-7">
+            <div>
+              <p className="eyebrow">For agencies and freelancers</p>
+              <h3 id="home-agencies" className="mt-1.5 text-[20px] font-semibold leading-snug tracking-[-0.02em] text-ink">Want to win more clients? Start with three free audits.</h3>
+              <p className="mt-2 max-w-xl text-[14.5px] leading-relaxed text-zinc-600">Tell us three businesses you would like to work with. Within one working day you get three audits of their pages, ready to send, with your agency’s name and logo on them. No card needed.</p>
+            </div>
+            <ButtonLink href="/agencies" size="lg" className="shrink-0">Get your free pack<ArrowRight className="size-4" aria-hidden /></ButtonLink>
+          </section>
         </div>
       </section>
 
