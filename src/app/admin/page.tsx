@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { adminOverview } from '@/lib/server/admin';
 import { Badge, type BadgeTone } from '@/components/ui/badge';
 import { hostPath } from '@/lib/format';
@@ -64,7 +65,7 @@ export default function AdminPage() {
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-[26px] font-semibold text-ink">Admin</h1>
-          <p className="mt-1 text-[14.5px] text-zinc-600">Live operational view. Times are UK time; refresh the page to update.</p>
+          <p className="mt-1 text-[14.5px] text-zinc-600">Live operational view. Times are UK time; refresh the page to update. Targets and the plan: <Link href="/admin/plan" className="link">Business plan</Link>.</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Badge tone={workerTone} dot>{o.worker ? `Worker seen ${ago(o.worker.at, t)} · ${o.worker.active} active` : 'Worker has never reported'}</Badge>

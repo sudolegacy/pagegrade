@@ -181,6 +181,31 @@ const MIGRATIONS: string[] = [
   );
   INSERT OR IGNORE INTO users (id, email, name, password_hash, notify_on_complete, notify_monitor, created_at, updated_at)
     VALUES ('guest', 'guest@pagegrade.invalid', 'Free grader', '!', 0, 0, 0, 0);`,
+  // 2.2: agency prospect-pack requests (the plan's main sales channel) and lifecycle email tracking.
+  `CREATE TABLE leads (
+    id TEXT PRIMARY KEY,
+    kind TEXT NOT NULL CHECK (kind IN ('pack', 'call', 'partner', 'other')),
+    name TEXT NOT NULL DEFAULT '',
+    email TEXT NOT NULL,
+    company TEXT NOT NULL DEFAULT '',
+    website TEXT NOT NULL DEFAULT '',
+    message TEXT NOT NULL DEFAULT '',
+    prospects TEXT NOT NULL DEFAULT '[]',
+    source TEXT NOT NULL DEFAULT '',
+    status TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'pack_sent', 'won', 'lost')),
+    note TEXT NOT NULL DEFAULT '',
+    user_id TEXT,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
+  CREATE INDEX leads_status ON leads(status, created_at DESC);
+  CREATE INDEX leads_email ON leads(email);
+  CREATE TABLE lifecycle_emails (
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    kind TEXT NOT NULL,
+    sent_at INTEGER NOT NULL,
+    PRIMARY KEY (user_id, kind)
+  );`,
 ];
 
 let instance: Database.Database | null = null;
