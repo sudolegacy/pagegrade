@@ -16,6 +16,8 @@ import { analysisCache, backupDatabase, cleanReviewWorkFiles, pruneExpired } fro
 import { reconcileSubscriptions } from '../lib/server/billing';
 import { monitorCheckFailed, monitorCheckFinished, scheduleDueMonitors, type MonitorOutcome } from '../lib/server/monitors';
 import { pruneGuestGrades } from '../lib/server/grader';
+import { runLifecycle } from '../lib/server/lifecycle';
+import { nextDigestAt, sendFounderDigest } from '../lib/server/digest';
 import { engineConfigFromEnv, ReviewError, runPipeline } from '../lib/engine/pipeline';
 import { intakeSchema } from '../lib/engine/intake';
 
@@ -139,6 +141,13 @@ async function main() {
   every(3600_000, 'prune', async () => { pruneExpired(); const n = await pruneGuestGrades(); if (n) log(`removed ${n} unclaimed free grades`); });
   every(10 * 60_000, 'monitors', () => { const ids = scheduleDueMonitors(); if (ids.length) log(`queued ${ids.length} weekly checks`); });
   every(6 * 3600_000, 'reconcile', async () => { const n = await reconcileSubscriptions(); if (n) log(`reconciled ${n} subscriptions`); });
+  every(24 * 3600_000, 'lifecycle', async () => {
+    const { sent, failed, byKind } = await runLifecycle();
+    if (sent || failed) log(`lifecycle emails: ${sent} sent, ${failed} failed`, byKind);
+  });
+  // The first digest waits for Monday morning instead of going out on first start; after that it repeats every seven days.
+  if (!kv.get('task:digest')) kv.set('task:digest', String(nextDigestAt() - 7 * 24 * 3600_000));
+  every(7 * 24 * 3600_000, 'digest', async () => { if ((await sendFounderDigest()).sent) log('founder digest sent'); });
 
   const shutdown = async (signal: string) => {
     if (stopping) return;

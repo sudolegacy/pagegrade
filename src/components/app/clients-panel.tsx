@@ -76,6 +76,7 @@ export function ClientsPanel({ initial, allowed }: { initial: Client[]; allowed:
                   <div className="mt-4 flex flex-wrap items-center gap-2">
                     <ButtonLink href={`/app/reviews?client=${c.id}`} variant="secondary" size="sm"><FolderOpen className="size-3.5" aria-hidden />Reviews</ButtonLink>
                     <Link href={`/app/bulk?client=${c.id}`} className="text-[13px] font-medium text-brand-700 hover:text-brand-800">Bulk review →</Link>
+                    {c.reviews > 0 && <a href={`/api/reviews/export?client=${encodeURIComponent(c.id)}`} className="text-[13px] font-medium text-brand-700 hover:text-brand-800">Download CSV</a>}
                     <Button variant="ghost" size="sm" className="ml-auto" onClick={() => remove(c)} aria-label={`Delete ${c.name}`}><Trash2 className="size-4" aria-hidden /></Button>
                   </div>
                 </li>
