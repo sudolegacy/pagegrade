@@ -1,12 +1,15 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { ArrowDownRight, ArrowRight, ArrowUpRight, Minus, Plus } from 'lucide-react';
-import { currentUser } from '@/lib/server/session';
+import { currentUser, isAdmin } from '@/lib/server/session';
 import { listReviews, getReview } from '@/lib/server/reviews';
 import { accountView } from '@/lib/server/account';
 import { hasSignupFeedback, SIGNUP_REASONS } from '@/lib/server/feedback';
+import { agencyOnboarding } from '@/lib/server/onboarding';
 import { FeedbackCard } from '@/components/app/feedback-card';
+import { OnboardingCard } from '@/components/app/onboarding-card';
 import { ReviewRows, hostPath, shortDate } from '@/components/app/review-list';
 import { StartForm } from '@/components/app/start-form';
 import { Alert } from '@/components/ui/field';
@@ -15,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScoreRing, scoreTone, toneText } from '@/components/ui/score';
 import { cn } from '@/lib/cn';
 import { CHECK_COUNT } from '@/lib/engine/catalog';
+import { ONBOARDING_COOKIE } from '@/lib/onboarding';
 
 export const metadata: Metadata = { title: 'Overview' };
 
@@ -24,6 +28,8 @@ export default async function Overview({ searchParams }: { searchParams: Promise
   const sp = await searchParams;
   const account = accountView(user);
   const askFeedback = !hasSignupFeedback(user.id);
+  const onboarding = (await cookies()).get(ONBOARDING_COOKIE)?.value === '1' ? null : agencyOnboarding(user, { admin: isAdmin(user) });
+  const onboardingCard = onboarding && !onboarding.complete ? <OnboardingCard steps={onboarding.steps} /> : null;
   const reviews = listReviews(user.id, { limit: 100 });
   const notices = (
     <>
@@ -58,6 +64,7 @@ export default async function Overview({ searchParams }: { searchParams: Promise
             ))}
           </ol>
         </div>
+        {onboardingCard && <div className="mt-6">{onboardingCard}</div>}
       </div>
     );
   }
@@ -94,6 +101,8 @@ export default async function Overview({ searchParams }: { searchParams: Promise
           <ArrowRight className="size-4 text-zinc-400" aria-hidden />
         </Link>
       )}
+
+      {onboardingCard}
 
       {latest?.report && (
         <section className="card overflow-hidden">

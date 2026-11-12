@@ -6,18 +6,22 @@ import { Alert } from '@/components/ui/field';
 import { Meter } from '@/components/ui/score';
 import { CopyButton } from '@/components/app/copy-button';
 import { LeadNote, LeadStatusSelect } from '@/components/app/lead-status-button';
+import { PackActions } from '@/components/app/pack-actions';
+import { OutreachWeekForm } from '@/components/app/outreach-week-form';
 import { cn } from '@/lib/cn';
 import { hostPath } from '@/lib/format';
 import { currentUser, isAdmin } from '@/lib/server/session';
+import { rateStatus, type RateStatus } from '@/lib/server/metrics-history';
 import { planMetrics, type CheckpointStatus, type ChecklistItem } from '@/lib/server/plan-metrics';
 import { LEAD_STATUSES, listLeads, type Lead, type LeadKind } from '@/lib/server/leads';
+import { packFor } from '@/lib/server/packs';
 import {
   ASSUMPTIONS, AUTOPILOT, BUDGET_EXCLUDED, BUDGET_LINES, BUDGET_TOTAL, CALL_AGENDA, CHANNELS, CHURN_CEILING, CONTENT_CALENDAR, COSTS, CUSTOMERS,
   DO_NOT, EMAIL_RULES, FIRST_WEEK, GOAL, INTERVIEW_QUESTIONS, KEY_DATES, MAILBOX, MIXES, MORE_MAILBOXES, MRR_CHECKPOINTS, OUTREACH_FOOTER,
   OUTREACH_TEMPLATES, OWNER_STEPS, PACK_RULE, PACK_STEPS, PASSES_TARGET, PLACEHOLDERS, PLAN_META, PLAN_SECTIONS, POSITIONING, PRICE_RISE_STEPS,
   PRICE_TABLE, PRICING_RULES, PROJECTION_NOTES, PROJECTIONS, PROSPECT_SOURCES, QUALIFICATION, REPLY_TEMPLATES, RETENTION, RISKS, ROADMAP,
   ROUTINE_DAILY, ROUTINE_NOTE, ROUTINE_WEEKLY, SAFEGUARDS, SALES_FLOW, SEND_LIMITS, STRATEGY_AVOID, STRATEGY_LATER, STRATEGY_NOW, TARGETS, TAX,
-  WEEK_TWO_CHECK, WEEKLY_METRICS, WHO_DOES_WHAT, gbp, mailboxCeiling, planDate, sectionTitle, triggerStatus,
+  WEEK_TWO_CHECK, WEEKLY_METRICS, WHO_DOES_WHAT, gbp, mailboxCeiling, planDate, planWeekdayDate, sectionTitle, triggerStatus,
   type LiveNumbers, type MetricId, type PlanSectionId,
 } from '@/content/business-plan';
 
@@ -151,6 +155,7 @@ const EMAIL_RE = /^[^\s@<>"?&%]+@[^\s@<>"?&%]+$/;
 function LeadRow({ lead }: { lead: Lead }) {
   const site = webHref(lead.website);
   const who = lead.name || lead.company || lead.email;
+  const pack = packFor(lead);
   return (
     <tr>
       <td className={cn(td, 'whitespace-nowrap tabular-nums')}>{dateTime(lead.createdAt)}</td>
@@ -166,9 +171,10 @@ function LeadRow({ lead }: { lead: Lead }) {
       </td>
       <td className={td}>{site ? <a href={site} target="_blank" rel="noopener noreferrer" className="link">{hostPath(site)}</a> : lead.website || '—'}</td>
       <td className={td}>
-        {lead.prospects.length === 0 ? '—' : (
+        {pack?.status.total ? null : lead.prospects.length === 0 ? '—' : (
           <ul className="space-y-0.5">{lead.prospects.map((p, i) => <li key={i} className="max-w-[200px] truncate" title={p}>{hostPath(p)}</li>)}</ul>
         )}
+        {lead.kind === 'pack' && <PackActions leadId={lead.id} company={lead.company || who} prospects={lead.prospects.length} pack={pack} />}
       </td>
       <td className={td}><LeadStatusSelect key={`${lead.id}:${lead.status}`} id={lead.id} status={lead.status} statuses={LEAD_STATUSES.map(({ id, label }) => ({ id, label }))} label={`Status for ${who}`} /></td>
       <td className={td}><LeadNote key={`${lead.id}:${lead.note}`} id={lead.id} note={lead.note} label={`Note for ${who}`} /></td>
@@ -186,6 +192,97 @@ function ChecklistRow({ item }: { item: ChecklistItem }) {
         <p className="mt-0.5 text-[13px] leading-snug text-zinc-500">{item.detail}</p>
       </div>
     </li>
+  );
+}
+
+type Metrics = ReturnType<typeof planMetrics>;
+type HistoryRow = Metrics['history']['weeks'][number];
+
+/** One outreach rate on the scoreboard: a green badge when it meets the plan's target, and the plan's own advice when it does not. */
+function RateStat({ label, value, detail, status, badTone, labels, ifWorse }: {
+  label: string; value: number | null; detail: ReactNode; status: RateStatus; badTone: 'amber' | 'red'; labels: [good: string, bad: string]; ifWorse?: string;
+}) {
+  return (
+    <Stat label={label} value={pct(value)} detail={detail} tone={status === 'bad' ? badTone : undefined}>
+      {status !== 'unknown' && <div className="mt-2"><Badge tone={status === 'good' ? 'brand' : badTone} dot>{status === 'good' ? labels[0] : labels[1]}</Badge></div>}
+      {status === 'bad' && ifWorse && <p className="mt-1.5 text-[12.5px] leading-snug text-zinc-600">{ifWorse}</p>}
+    </Stat>
+  );
+}
+
+/** Pack, opt-out and bounce rates come from the numbers typed into the weekly check-in; packs to customers come from the pipeline. */
+function OutreachCards({ m }: { m: Metrics }) {
+  const { last4Weeks: { totals, rates }, statuses, packToCustomer } = m.outreach;
+  const ifWorse = (id: MetricId) => WEEKLY_METRICS.find((w) => w.id === id)?.ifWorse;
+  const detail = (n: number, target: string, link?: boolean): ReactNode => {
+    if (rates.emailed > 0) return `${n} of ${rates.emailed} prospects emailed · target ${target}${totals.weeks < 4 ? ` · ${totals.weeks} of 4 weeks logged` : ''}`;
+    if (totals.weeks > 0) return `No prospects emailed in the weeks logged · target ${target}`;
+    return <>No outreach logged yet · {link && <><a href="#weekly" className="link">add this week&apos;s numbers</a> · </>}target {target}</>;
+  };
+  return (
+    <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <RateStat label="Pack requests / prospects emailed (4 weeks)" value={rates.packRate} status={statuses.packRate} badTone="amber" labels={['On target', 'Below target']}
+        detail={detail(totals.packRequests, `${TARGETS.packRequestPct}%+`, true)} ifWorse={ifWorse('pack-requests')} />
+      <RateStat label="Opt-outs (4 weeks)" value={rates.optOutRate} status={statuses.optOutRate} badTone="red" labels={['Under the limit', 'Over the limit']}
+        detail={detail(totals.optOuts, `under ${TARGETS.optOutPct}%`)} ifWorse={ifWorse('opt-outs')} />
+      <RateStat label="Bounces (4 weeks)" value={rates.bounceRate} status={statuses.bounceRate} badTone="red" labels={['Under the limit', 'Over the limit']}
+        detail={detail(totals.bounces, `under ${TARGETS.bouncePct}%`)} ifWorse={ifWorse('bounces')} />
+      <RateStat label="Packs → customers (4 weeks)" value={packToCustomer.pct} status={statuses.packToCustomer} badTone="amber" labels={['On target', 'Below target']}
+        detail={packToCustomer.sent === 0 ? `No packs sent in 4 weeks · target ${TARGETS.packToCustomerPct}%+` : `${packToCustomer.won} of ${packToCustomer.sent} packs sent became customers · target ${TARGETS.packToCustomerPct}%+`}
+        ifWorse={ifWorse('pack-conversion')} />
+    </div>
+  );
+}
+
+function RateCell({ rate, part, whole, status, bad }: { rate: number | null; part: number; whole: number; status: RateStatus; bad: string }) {
+  if (rate == null) return <>—</>;
+  return (
+    <>
+      <span className={status === 'good' ? 'font-medium text-brand-700' : status === 'bad' ? bad : undefined}>{pct(rate)}</span>
+      <span className="block text-[11.5px] font-normal text-zinc-500">{part} of {whole}</span>
+    </>
+  );
+}
+
+/** One row for each Monday, newest first: the app's own snapshot beside the outreach numbers typed in, and the plan's target where a checkpoint falls. */
+function WeeklyHistory({ weeks }: { weeks: HistoryRow[] }) {
+  if (weeks.length === 0) {
+    return <Empty>No history yet. The app saves a row of its own numbers every Monday morning, so this table starts filling after the next one. Outreach numbers you add above appear here straight away.</Empty>;
+  }
+  const none = '—';
+  return (
+    <div className="space-y-2">
+      <DataTable minWidth="min-w-[1280px]" right={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
+        head={['Week to', 'MRR', 'Paying', 'Agencies', 'New sign-ups', 'Free grades', 'Pack requests (site)', 'Prospects emailed', 'Pack rate', 'Opt-out rate', 'Bounce rate', 'Cancellations', 'AI spend']}
+        rows={weeks.map(({ weekStart, snapshot: s, outreach: o, checkpoint: cp, packRate, optOutRate, bounceRate }) => [
+          <>
+            {planWeekdayDate(weekStart)}
+            {cp && (
+              <div className="mt-1.5 space-y-1 font-normal">
+                <div><Badge tone="blue">{cp.label} checkpoint</Badge></div>
+                <p className="text-[12px] leading-snug text-zinc-500">Base {gbp(cp.baseMrr)} · fast {gbp(cp.fastMrr)}</p>
+                {cp.status && <div><Badge tone={STATUS_LABEL[cp.status].tone} dot>{STATUS_LABEL[cp.status].label}</Badge></div>}
+              </div>
+            )}
+            {o?.note && <p className="mt-1 max-w-[220px] text-[12px] font-normal leading-snug text-zinc-500">{o.note}</p>}
+          </>,
+          s ? gbp(s.mrrGbp) : none,
+          s ? s.paying : none,
+          s ? s.agencies : none,
+          s ? s.newUsers : none,
+          s ? s.grades : none,
+          s ? s.packRequests : none,
+          o ? <>{o.prospectsEmailed}<span className="block text-[11.5px] text-zinc-500">{plural(o.replies, 'reply', 'replies')} · {plural(o.calls, 'call')}</span></> : none,
+          o ? <RateCell rate={packRate} part={o.packRequests} whole={o.prospectsEmailed} status={rateStatus(packRate, TARGETS.packRequestPct, 'min')} bad="font-medium text-amber-700" /> : none,
+          o ? <RateCell rate={optOutRate} part={o.optOuts} whole={o.prospectsEmailed} status={rateStatus(optOutRate, TARGETS.optOutPct, 'max')} bad="font-medium text-red-700" /> : none,
+          o ? <RateCell rate={bounceRate} part={o.bounces} whole={o.prospectsEmailed} status={rateStatus(bounceRate, TARGETS.bouncePct, 'max')} bad="font-medium text-red-700" /> : none,
+          s ? s.cancellations : none,
+          s ? usd2(s.spendUsd) : none,
+        ])} />
+      <p className="text-[13px] text-zinc-500">
+        Each row is the week to that Monday. The app saves MRR, customers, sign-ups, free grades, pack requests from the site, cancellations and AI spend itself on Monday morning. Prospects emailed, replies, calls and the pack, opt-out and bounce rates come from the numbers you typed in.
+      </p>
+    </div>
   );
 }
 
@@ -288,6 +385,7 @@ export default async function BusinessPlanPage() {
               <Stat label="AI spend today (UTC)" value={usd(m.ai.spendTodayUsd)} tone={spendRatio >= 1 ? 'red' : spendRatio >= 0.8 || m.ai.capTooHigh ? 'amber' : undefined}
                 detail={`Cap ${usd2(m.ai.capUsd)}${m.ai.capTooHigh ? ` · plan says ${usd2(m.ai.recommendedCapUsd)}` : ''}`} />
             </div>
+            <OutreachCards m={m} />
             <div className="mt-3 flex flex-wrap gap-2 text-[12.5px] text-zinc-600">
               <span className="rounded-md bg-zinc-100 px-2 py-1 tabular-nums">Free grades (7 days) <b className="font-semibold text-ink">{m.grader.grades7}</b></span>
               <span className="rounded-md bg-zinc-100 px-2 py-1 tabular-nums">Unlocked by sign-ups <b className="font-semibold text-ink">{m.grader.claimed7}</b></span>
@@ -310,10 +408,21 @@ export default async function BusinessPlanPage() {
             <ul className="card divide-y divide-zinc-100">{m.launch.items.map((item) => <ChecklistRow key={item.id} item={item} />)}</ul>
           </Section>
 
+          <Section id="weekly" lede="Outreach runs in a Google Sheet, so the app cannot see it. Copy its numbers in each Monday and the scoreboard shows your pack, opt-out and bounce rates against the plan. The app saves the rest of each week's numbers by itself.">
+            <div>
+              <Sub>This week&apos;s outreach numbers</Sub>
+              <OutreachWeekForm weeks={m.history.outreachWeeks} options={m.history.recentMondays.map((t) => ({ weekStart: t, label: planWeekdayDate(t) }))} />
+            </div>
+            <div>
+              <Sub>History</Sub>
+              <WeeklyHistory weeks={m.history.weeks} />
+            </div>
+          </Section>
+
           <Section id="pipeline" count={leads.length} lede="Agencies and others who asked for a pack, a call or a partner link through the site. Replies to Autopilot emails stay in Gmail and the Autopilot dashboard.">
             {leads.length === 0 ? <Empty>No open requests. Requests from the agencies page appear here and email you.</Empty> : (
               <div className="card overflow-x-auto">
-                <table className="w-full min-w-[980px]">
+                <table className="w-full min-w-[1040px]">
                   <thead className="border-b border-zinc-100">
                     <tr><th className={th}>When</th><th className={th}>Request</th><th className={th}>Contact</th><th className={th}>Website</th><th className={th}>Prospects</th><th className={th}>Status</th><th className={th}>Note</th></tr>
                   </thead>
@@ -324,6 +433,7 @@ export default async function BusinessPlanPage() {
             <p className="text-[13px] text-zinc-500">
               {m.leads.open} open · {m.leads.won} became customers · {lost} not now · {m.leads.total} in total.
               {m.leads.packsSent > 0 && <> Packs that became customers: {pct(m.leads.packToCustomerPct)} ({m.leads.packsWon} of {m.leads.packsSent}).</>} Aim to send each pack within 24 hours (see Sales workflow).
+              {' '}Build pack makes the agency a client folder and queues its prospects; add the agency&apos;s logo in the folder, download the PDFs and copy the reply.
             </p>
           </Section>
 
