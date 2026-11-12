@@ -1,6 +1,7 @@
 import { db, kv, now } from './db';
 import { env } from './env';
 import { leadStats } from './leads';
+import { WEEK, listOutreachWeeks, listSnapshots, outreachRates, outreachTotals, percentOf, rateStatus, weekStart } from './metrics-history';
 import { PLANS, monthlyValue, planById, type BillingInterval, type PlanId } from '../plans';
 import { MRR_CHECKPOINTS, TARGETS, type MrrCheckpoint } from '@/content/business-plan';
 
@@ -29,13 +30,15 @@ export type CheckpointProgress = MrrCheckpoint & {
   gapToBase: number;
 };
 
+const checkpointStatus = (c: MrrCheckpoint, mrr: number): CheckpointStatus => (mrr >= c.fastMrr ? 'ahead' : mrr >= c.baseMrr ? 'on_track' : 'behind');
+
 function progressFor(c: MrrCheckpoint, mrr: number, at: number): CheckpointProgress {
   const passed = c.at <= at;
   return {
     ...c,
     passed,
     days: passed ? Math.floor((at - c.at) / DAY) : Math.ceil((c.at - at) / DAY),
-    status: mrr >= c.fastMrr ? 'ahead' : mrr >= c.baseMrr ? 'on_track' : 'behind',
+    status: checkpointStatus(c, mrr),
     aboveBase: mrr >= c.baseMrr,
     aboveFast: mrr >= c.fastMrr,
     gapToBase: Math.max(0, round2(c.baseMrr - mrr)),
@@ -118,6 +121,69 @@ function launchChecklist(input: { at: number; paying: number; capUsd: number; re
     { id: 'verification', label: 'Email verification', severity: 'advised', ok: env.requireVerification,
       detail: env.requireVerification ? 'Reviews require a verified email address.' : 'Email verification is off. Set REQUIRE_EMAIL_VERIFICATION=true once SMTP works so throwaway addresses cannot use up AI spend.' },
   ];
+}
+
+const OUTREACH_WEEKS = 4;
+const HISTORY_WEEKS = 26;
+/** The outreach form offers this week's Monday and the eight before it. */
+const FORM_WEEKS = 9;
+
+/**
+ * Outreach rates over the last four Mondays (the current one included) and, from the pipeline, how many packs asked for in those
+ * four weeks became customers. Also one row per week, newest first, joining the weekly snapshot to the numbers typed in from the Autopilot sheet.
+ */
+function weeklyView(at: number) {
+  const monday = weekStart(at);
+  const since = monday - (OUTREACH_WEEKS - 1) * WEEK;
+  const totals = outreachTotals(since);
+  const rates = outreachRates(since);
+  // "Not now" leads are left out, as in the all-time figure.
+  const packs = db().prepare(`SELECT
+      COALESCE(SUM(CASE WHEN status IN ('pack_sent', 'won') THEN 1 ELSE 0 END), 0) AS sent,
+      COALESCE(SUM(CASE WHEN status = 'won' THEN 1 ELSE 0 END), 0) AS won
+    FROM leads WHERE kind = 'pack' AND created_at >= ?`).get(at - OUTREACH_WEEKS * WEEK) as { sent: number; won: number };
+  const packToCustomerPct = packs.sent > 0 ? round1((packs.won / packs.sent) * 100) : null;
+
+  const snapshots = listSnapshots(HISTORY_WEEKS);
+  const outreachWeeks = listOutreachWeeks(HISTORY_WEEKS);
+  const snapshotByWeek = new Map(snapshots.map((s) => [s.weekStart, s]));
+  const outreachByWeek = new Map(outreachWeeks.map((o) => [o.weekStart, o]));
+  const weeks = [...new Set([...snapshotByWeek.keys(), ...outreachByWeek.keys()])].sort((a, b) => b - a).slice(0, HISTORY_WEEKS).map((week) => {
+    const snapshot = snapshotByWeek.get(week) ?? null;
+    const outreach = outreachByWeek.get(week) ?? null;
+    const checkpoint = MRR_CHECKPOINTS.find((c) => c.at >= week && c.at < week + WEEK);
+    return {
+      weekStart: week,
+      snapshot,
+      outreach,
+      packRate: outreach && percentOf(outreach.packRequests, outreach.prospectsEmailed),
+      optOutRate: outreach && percentOf(outreach.optOuts, outreach.prospectsEmailed),
+      bounceRate: outreach && percentOf(outreach.bounces, outreach.prospectsEmailed),
+      checkpoint: checkpoint ? {
+        id: checkpoint.id, label: checkpoint.label, baseMrr: checkpoint.baseMrr, fastMrr: checkpoint.fastMrr,
+        status: snapshot ? checkpointStatus(checkpoint, snapshot.mrrGbp) : null,
+      } : null,
+    };
+  });
+
+  return {
+    outreach: {
+      last4Weeks: { totals, rates },
+      packToCustomer: { sent: packs.sent, won: packs.won, pct: packToCustomerPct },
+      statuses: {
+        packRate: rateStatus(rates.packRate, TARGETS.packRequestPct, 'min'),
+        optOutRate: rateStatus(rates.optOutRate, TARGETS.optOutPct, 'max'),
+        bounceRate: rateStatus(rates.bounceRate, TARGETS.bouncePct, 'max'),
+        packToCustomer: rateStatus(packToCustomerPct, TARGETS.packToCustomerPct, 'min'),
+      },
+    },
+    history: {
+      snapshots,
+      outreachWeeks,
+      weeks,
+      recentMondays: Array.from({ length: FORM_WEEKS }, (_, i) => monday - i * WEEK),
+    },
+  };
 }
 
 /**
@@ -248,6 +314,7 @@ export function planMetrics(at: number = now()) {
       ready: items.filter((i) => i.ok).length,
       blocking: items.filter((i) => !i.ok && i.severity === 'required').length,
     },
+    ...weeklyView(at),
   };
 }
 export type PlanMetrics = ReturnType<typeof planMetrics>;

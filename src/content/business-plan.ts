@@ -49,6 +49,7 @@ export const FOUNDING_DEADLINE = 'Sunday 31 January 2027';
 export const PLAN_SECTIONS = [
   { id: 'scoreboard', title: 'Scoreboard', group: 'Live numbers' },
   { id: 'launch', title: 'Launch checklist', group: 'Live numbers' },
+  { id: 'weekly', title: 'Weekly check-in', group: 'Live numbers' },
   { id: 'pipeline', title: 'Pipeline', group: 'Live numbers' },
   { id: 'goal', title: 'Goal and timeline', group: 'The plan' },
   { id: 'positioning', title: 'Positioning', group: 'The plan' },
