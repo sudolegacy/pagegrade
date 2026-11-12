@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { handler, assertSameOrigin, readJson, json, HttpError } from '@/lib/server/http';
 import { isAdmin, requireApiUser } from '@/lib/server/session';
-import { createReviews, entitledPlan, spendToday, type NewReview } from '@/lib/server/reviews';
+import { assertCapacity, createReviews, entitledPlan, type NewReview } from '@/lib/server/reviews';
 import { limitOrThrow } from '@/lib/server/auth-flows';
 import { env } from '@/lib/server/env';
 import { BULK_MAX } from '@/lib/plans';
@@ -24,7 +24,7 @@ export const POST = handler(async (req) => {
   if (env.requireVerification && !user.emailVerifiedAt) throw new HttpError(403, 'Confirm your email address to start reviewing. We sent you a link when you signed up.', 'unverified');
   limitOrThrow(`bulk:user:${user.id}`, 10, 3600_000, 'You have started several batches in the last hour. Please wait a little before starting another.');
   const { urls, clientId, ...intake } = body.parse(await readJson(req));
-  if (spendToday() >= Number(process.env.AI_DAILY_BUDGET_USD || 25)) throw new HttpError(503, 'PageGrade is very busy right now. Please try again in a few hours.', 'capacity');
+  assertCapacity(user);
 
   const lines = [...new Set(urls.map((u) => u.trim()).filter(Boolean))];
   if (!lines.length) throw new HttpError(400, 'Add at least one page address.', 'no_pages', { field: 'urls' });
