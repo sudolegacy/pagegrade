@@ -4,22 +4,25 @@ import { LegalPage } from '@/components/site/legal-page';
 import { LEGAL_UPDATED } from '@/lib/legal';
 import { SITE } from '@/lib/site';
 
-export const metadata: Metadata = { title: 'Cookie policy', description: 'PageGrade uses a single, strictly necessary cookie to keep you signed in.', alternates: { canonical: '/cookies' } };
+export const metadata: Metadata = { title: 'Cookie policy', description: 'PageGrade sets only strictly necessary first-party cookies: to keep you signed in, to remember free grades and partner links, and to remember a hidden checklist. No analytics or advertising cookies.', alternates: { canonical: '/cookies' } };
 
 export default function CookiesPage() {
   return (
     <LegalPage title="Cookie policy" updated={LEGAL_UPDATED} current="/cookies"
-      intro={<p>The short version: PageGrade sets one cookie, only when you sign in, and only so that you stay signed in. There are no analytics, advertising or tracking cookies, which is why we do not show a cookie banner.</p>}>
-      <h2>The cookie we use</h2>
+      intro={<p>The short version: PageGrade sets a handful of small first-party cookies, each with one job: keeping you signed in, remembering your free grades, crediting a partner who referred you, and remembering a checklist you hid. There are no analytics, advertising or tracking cookies, which is why we do not show a cookie banner.</p>}>
+      <h2>The cookies we use</h2>
       <div className="overflow-x-auto">
         <table>
           <thead><tr><th>Name</th><th>Purpose</th><th>Duration</th></tr></thead>
           <tbody>
             <tr><td><code>pg_session</code> (named <code>__Host-pg_session</code> on secure connections)</td><td>Keeps you signed in to your account. It holds a random token and nothing else; it cannot be read by scripts on the page.</td><td>30 days, or until you log out</td></tr>
+            <tr><td><code>pg_guest</code></td><td>Set when you use the free grader without an account, so your free grades can be shown to you again and moved into your account if you sign up. A random identifier only.</td><td>30 days</td></tr>
+            <tr><td><code>pg_ref</code></td><td>Set when you arrive through a partner&rsquo;s link, so the partner is credited if you become a customer. It holds the partner code only.</td><td>60 days</td></tr>
+            <tr><td><code>pg_onboarding_hidden</code></td><td>Remembers that you hid the getting-started checklist in the app. It holds the value 1 only.</td><td>1 year</td></tr>
           </tbody>
         </table>
       </div>
-      <p>This cookie is strictly necessary to provide the service you ask for, so under the Privacy and Electronic Communications Regulations it does not need your consent. You can block or delete cookies in your browser settings, but you will not be able to sign in without it.</p>
+      <p>These cookies are strictly necessary to provide the service you ask for, so under the Privacy and Electronic Communications Regulations they do not need your consent. You can block or delete cookies in your browser settings, but you will not be able to sign in without the session cookie.</p>
 
       <h2>Payments</h2>
       <p>When you upgrade or manage your plan, you are taken to pages run by Stripe. Stripe sets its own cookies there, for example to prevent fraud. Those cookies are covered by <a href="https://stripe.com/cookies-policy/legal" rel="noopener noreferrer">Stripe&rsquo;s cookie policy</a>.</p>

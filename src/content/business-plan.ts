@@ -49,6 +49,7 @@ export const FOUNDING_DEADLINE = 'Sunday 31 January 2027';
 export const PLAN_SECTIONS = [
   { id: 'scoreboard', title: 'Scoreboard', group: 'Live numbers' },
   { id: 'launch', title: 'Launch checklist', group: 'Live numbers' },
+  { id: 'weekly', title: 'Weekly check-in', group: 'Live numbers' },
   { id: 'pipeline', title: 'Pipeline', group: 'Live numbers' },
   { id: 'goal', title: 'Goal and timeline', group: 'The plan' },
   { id: 'positioning', title: 'Positioning', group: 'The plan' },
@@ -180,7 +181,7 @@ export const GOAL = {
     "Agencies' own websites are no longer reviewed. Agencies are offered a free pack of three audits of businesses they could win, with the agency's own name and logo on them. Only business owners get an audit of their own page.",
     'Most of the selling runs itself. The free Outreach Autopilot (a Google Sheet with a script) finds contact emails, sends, follows up, and stops when someone replies, opts out or bounces. You add names and websites, make packs and take calls.',
     'Every growth strategy is listed and ranked: do now, do later (with the trigger for starting it) or skip, with the reason.',
-    'Checked against the code, with the maths redone. The AI cap pauses every review, paying customers\' too. The default caps allow far more AI spend than this budget. Because each prospect gets up to three emails, 30 emails a day reach about 10 new prospects, not 30.',
+    'Checked against the code, with the maths redone. The AI cap now pauses free grades and free accounts first; paying customers keep running until the hard cap (three times the budget by default). Because each prospect gets up to three emails, 30 emails a day reach about 10 new prospects, not 30.',
     'Three scenarios instead of one hopeful line, with every assumption shown.',
   ],
 };
@@ -275,7 +276,7 @@ export const BUDGET_EXCLUDED: { item: string; note: string }[] = [
 ];
 
 export const SAFEGUARDS: { setting: string; value: string; usual: string; why: string }[] = [
-  { setting: 'AI_DAILY_BUDGET_USD', value: '1', usual: 'Default 25', why: "About 50 reviews a day. When it is reached, every review pauses for the rest of the day, paying customers' too. Raise it to $3 once people pay, then add about $0.30 a day for each Agency customer. It is an estimate, not a hard stop." },
+  { setting: 'AI_DAILY_BUDGET_USD', value: '1', usual: 'Default 25', why: "About 50 reviews a day. When it is reached, free grades and free accounts pause for the rest of the day; paying customers keep going until AI_DAILY_HARD_CAP_USD (three times the budget unless you set it). Raise it to $3 once people pay, then add about $0.30 a day for each Agency customer. It is an estimate, not a hard stop." },
   { setting: 'FREE_GRADER_DAILY_LIMIT', value: String(TARGETS.graderDailyLimit), usual: 'Default 150, about $3 a day', why: 'About 30p a day at most.' },
   { setting: 'FREE_GRADER_PER_IP', value: String(TARGETS.graderPerIp), usual: 'Default 3', why: 'Keep it: free grades per visitor per day.' },
   { setting: 'OpenAI prepaid credit', value: 'Auto-recharge off', usual: '', why: 'The real spending limit. Set a budget alert too, and top up from revenue on Mondays.' },
@@ -423,14 +424,13 @@ export const CALL_AGENDA: { step: string; minutes: number }[] = [
 ];
 
 export const PACK_STEPS: string[] = [
-  'Use a second admin account just for packs, for example yourname+demo@gmail.com, added to ADMIN_EMAILS so it has every Agency feature for free.',
-  'Set its branding to the agency (Settings → Branded reports): name, website, colour and logo (PNG or JPG, from their site). Turn on White label so only their brand shows.',
-  'Bulk-review the three websites they sent (or three businesses in their niche and city) into a client folder named after the agency.',
-  'Download the three PDFs from the finished reviews and read them.',
-  'Reply in the same Gmail thread with the PDFs attached, using the pack reply in Email templates. Type "Pack sent" in the row\'s Status (the Autopilot leaves statuses you type alone), or set the lead to Pack sent in the Pipeline.',
-  "Send PDFs, never share links, from the demo account. Its branding changes with every pack, so old links would show the next agency's logo.",
+  'In the Pipeline, click Build pack on the lead. PageGrade creates a client folder named after the agency, with the agency\'s name as the folder brand, and queues an audit of each page they sent. For a lead that arrived by email, add the three websites to the lead first or use Bulk review into a folder named after the agency.',
+  'Open the folder on the Clients page and add the agency\'s logo and colour (PNG or JPG, from their site). The folder\'s brand goes on every shared report and PDF in that folder; your own account brand is untouched. Turn on White label in Settings → Branded reports if only their brand should show.',
+  'When the audits finish, read all three PDFs: the links are on the lead in the Pipeline.',
+  'Click Copy reply on the lead and paste it into the same Gmail thread with the three PDFs attached. Set the lead to Pack sent, and type "Pack sent" in the Autopilot row\'s Status (the Autopilot leaves statuses you type alone).',
+  'Send PDFs, never share links, unless the folder has their logo on it: a folder link stays correct because each folder keeps its own brand.',
 ];
-export const PACK_RULE = 'Make and send every pack within 24 hours of the yes. It takes about 10 minutes.';
+export const PACK_RULE = 'Make and send every pack within 24 hours of the yes. With Build pack it takes about five minutes of your time.';
 
 export const OWNER_STEPS: string[] = [
   'Find pages that have to sell: businesses running ads (Google Ads Transparency Center, Meta Ad Library), new launches (Product Hunt, BetaList) and local services with a booking or quote page.',
@@ -691,7 +691,7 @@ export const ROADMAP: RoadmapItem[] = [
   { phase: 'Week 2', item: 'Sign-up alert and a weekly founder email', why: 'New sign-ups, MRR, cancellations and AI spend against the cap, without opening the admin page.', size: 'Small', shipped: true, note: 'A sign-up alert for every new account and a weekly digest (FOUNDER_ALERT_EMAIL).' },
   { phase: 'Month 1', item: 'Lifecycle emails: welcome, tips on day 2, free reviews used up, no review in 7 days', why: 'Replaces most of the manual notes in the reply templates.', size: 'Medium', shipped: true, note: 'First-review nudge, free-reviews-used note, and Agency onboarding with day 7 and day 25 check-ins, each sent once per user.' },
   { phase: 'Month 1', item: 'An agencies page with the pack offer, a sample pack and a booking link', why: 'Emails and posts can link to it, and it converts visitors on its own.', size: 'Small', shipped: true, note: 'The agencies page and pack request form. Requests become leads and email you.' },
-  { phase: 'Months 2–3', item: 'Branding for each client folder', why: 'Packs without a demo account, and share links that are safe to send.', size: 'Medium', shipped: false },
+  { phase: 'Months 2–3', item: 'Branding for each client folder', why: 'Packs without a demo account, and share links that are safe to send.', size: 'Medium', shipped: true, note: 'Each client folder can carry its own name, colour and logo, used on that folder\'s shared reports and PDFs. "Build pack" in the Pipeline creates the folder and queues the audits from a lead in one click.' },
   { phase: 'Later', item: 'A bigger agency plan (limits in plans.ts and new Stripe prices)', why: 'More revenue from the agencies that use PageGrade most.', size: 'Small, when 5+ agencies are near 200 reviews', shipped: false },
   { phase: 'Later', item: 'A grader widget agencies put on their own site, with their branding', why: 'Agencies capture their own leads with PageGrade, so they never cancel.', size: 'Large, when 3+ agencies ask', shipped: false },
 ];
@@ -736,7 +736,7 @@ export const FIRST_WEEK: { day: string; text: string }[] = [
 export const RISKS: { risk: string; sign: string; response: string }[] = [
   { risk: 'Emails land in spam', sign: 'Replies drop to almost none; bounces rise.', response: 'Slow down; plain text and one link; check the list. New mailboxes start at 10 a day.' },
   { risk: 'Google limits or suspends the outreach account', sign: 'Sending errors or a warning from Google.', response: '30 a day or less, honour opt-outs, and keep outreach on its own account.' },
-  { risk: "The AI cap pauses paying customers' reviews", sign: 'Paused or failed reviews on the Live admin page.', response: 'Raise AI_DAILY_BUDGET_USD as customers grow: about $0.30 a day per Agency customer.' },
+  { risk: "The AI hard cap pauses paying customers' reviews", sign: 'Paused or failed reviews on the Live admin page; spend near the hard cap.', response: 'Raise AI_DAILY_BUDGET_USD as customers grow (about $0.30 a day per Agency customer); the hard cap follows it at three times unless you set AI_DAILY_HARD_CAP_USD.' },
   { risk: 'AI credit runs out', sign: 'Balance under $3.', response: 'Auto-recharge off; top up from revenue on Mondays.' },
   { risk: "Agencies don't ask for packs", sign: 'Under 2% after 200 prospects.', response: 'New subject and opening; a narrower niche (for example Shopify or SEO agencies); more owner emails.' },
   { risk: "Packs don't convert", sign: 'Under 10% of packs.', response: 'Faster replies, a call and the money-back promise.' },
