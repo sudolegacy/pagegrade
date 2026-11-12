@@ -151,6 +151,7 @@ export const mailer = {
       'Add your logo and name in Settings, so reports and PDFs carry your brand instead of ours.',
       `Create a client folder, then bulk review up to ${BULK_MAX} of that client's pages in one go.`,
       "Set up weekly checks for the pages of your five most important clients. You'll get an email when a score drops, a page goes down or a competitor changes.",
+      'Put the lead widget on your own website (Lead widget in the menu): visitors check their own pages, and you get each lead with the full report.',
     ],
     cta: { label: 'Set up your branding', url: o.url },
     outro: closing(o.bookingUrl
@@ -166,4 +167,16 @@ export const mailer = {
     cta: { label: 'Open PageGrade', url: o.url },
     outro: closing(),
   }),
+  /** Agency alert: a visitor used the lead widget on the agency's website. Sent once the audit has finished or failed. */
+  widgetLead: (to: string, o: { name: string; email: string; pageUrl: string; source: string; score: number | null; grade: string | null; failedReason: string | null; reportUrl: string; leadsUrl: string }) =>
+    sendMail(to, o.score != null ? `New lead: ${o.email} scored ${o.score}/100` : `New lead: ${o.email}`, {
+      heading: 'New lead from your website audit',
+      intro: `${o.name ? `${o.name} (${o.email})` : o.email} audited ${o.pageUrl} with the lead widget${o.source ? ` on ${o.source}` : ' on your website'}.`,
+      items: [
+        o.score != null ? `Score: ${o.score}/100${o.grade ? ` (${o.grade})` : ''}. They saw the score and the three biggest problems, but not the fixes.` : `We could not audit the page: ${o.failedReason ?? 'it did not load.'} It is still worth getting in touch.`,
+        'Reply today, while the page is on their mind: offer to walk them through the fixes. Opening line idea: "I saw you ran our website check. The first thing I would change is…"',
+      ],
+      cta: o.score != null ? { label: 'Open the full report', url: o.reportUrl } : { label: 'See your leads', url: o.leadsUrl },
+      outro: 'You get one email per lead. Turn them off on the Lead widget page in PageGrade.',
+    }),
 };

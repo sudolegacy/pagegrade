@@ -37,9 +37,11 @@ export function adminOverview() {
       COALESCE(SUM(CASE WHEN origin = 'guest' THEN 1 ELSE 0 END), 0) AS grades,
       COALESCE(SUM(CASE WHEN origin = 'guest' AND user_id != 'guest' THEN 1 ELSE 0 END), 0) AS claimed,
       COALESCE(SUM(CASE WHEN origin = 'monitor' THEN 1 ELSE 0 END), 0) AS checks,
-      COALESCE(SUM(CASE WHEN origin = 'bulk' THEN 1 ELSE 0 END), 0) AS bulk
-    FROM reviews WHERE created_at >= ?`).get(t - 7 * DAY) as { grades: number; claimed: number; checks: number; bulk: number };
+      COALESCE(SUM(CASE WHEN origin = 'bulk' THEN 1 ELSE 0 END), 0) AS bulk,
+      COALESCE(SUM(CASE WHEN origin = 'widget' THEN 1 ELSE 0 END), 0) AS widget
+    FROM reviews WHERE created_at >= ?`).get(t - 7 * DAY) as { grades: number; claimed: number; checks: number; bulk: number; widget: number };
   const monitors = (conn.prepare('SELECT COUNT(*) AS n FROM monitors WHERE active = 1').get() as { n: number }).n;
+  const widgets = (conn.prepare('SELECT COUNT(*) AS n FROM widgets WHERE active = 1').get() as { n: number }).n;
   const referred = (conn.prepare('SELECT COUNT(*) AS n FROM users WHERE referred_by IS NOT NULL').get() as { n: number }).n;
   const byStatus = Object.fromEntries((conn.prepare('SELECT status, COUNT(*) AS n FROM reviews GROUP BY status').all() as { status: string; n: number }[]).map((r) => [r.status, r.n]));
   const day = conn.prepare(`SELECT COUNT(*) AS finished,
@@ -70,7 +72,7 @@ export function adminOverview() {
   return {
     generatedAt: t,
     users, paid, pastDue, byStatus, day, month, queue, failures, recentUsers, stripeErrors,
-    mrrGbp, yearlyCustomers, growth, monitors, referred,
+    mrrGbp, yearlyCustomers, growth, monitors, widgets, referred,
     partners: referralBalances(),
     feedback: recentFeedback(25),
     signupReasons: feedbackCounts('signup'),

@@ -237,6 +237,39 @@ const MIGRATIONS: string[] = [
     spend_usd REAL NOT NULL DEFAULT 0,
     created_at INTEGER NOT NULL
   );`,
+  // 2.3: the lead widget agencies embed on their own site, and the leads it captures.
+  // Widget audits are reviews with origin 'widget', owned by the agency.
+  `CREATE TABLE widgets (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    active INTEGER NOT NULL DEFAULT 1,
+    headline TEXT NOT NULL DEFAULT '',
+    intro TEXT NOT NULL DEFAULT '',
+    button_label TEXT NOT NULL DEFAULT '',
+    cta_label TEXT NOT NULL DEFAULT '',
+    cta_url TEXT NOT NULL DEFAULT '',
+    privacy_url TEXT NOT NULL DEFAULT '',
+    allowed_hosts TEXT NOT NULL DEFAULT '',
+    notify INTEGER NOT NULL DEFAULT 1,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
+  CREATE TABLE widget_leads (
+    id TEXT PRIMARY KEY,
+    widget_id TEXT NOT NULL,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    review_id TEXT NOT NULL,
+    name TEXT NOT NULL DEFAULT '',
+    email TEXT NOT NULL,
+    url TEXT NOT NULL,
+    source TEXT NOT NULL DEFAULT '',
+    key_hash TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'won', 'lost')),
+    notified_at INTEGER,
+    created_at INTEGER NOT NULL
+  );
+  CREATE INDEX widget_leads_user ON widget_leads(user_id, created_at DESC);
+  CREATE INDEX widget_leads_review ON widget_leads(review_id);`,
 ];
 
 let instance: Database.Database | null = null;

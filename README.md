@@ -9,13 +9,17 @@ PageGrade reviews landing pages and provides a prioritised report with evidence,
 | Free | £0 | 3 lifetime | Standard | – |
 | Starter | £9/month or £90/year | 10/month | Standard | 1 weekly monitor |
 | Pro | £29/month or £290/year | 40/month | Priority | 5 monitors, PDF reports |
-| Agency | £99/month or £990/year | 200/month | Priority | 50 monitors, PDF reports, branded and white-label reports, client folders, bulk reviews |
+| Agency | £99/month or £990/year | 200/month | Priority | 50 monitors, PDF reports, branded and white-label reports, client folders, bulk reviews, lead widget (100 visitor checks/month) |
 
 Every plan receives the full report. Failed reviews do not consume an allowance. Anyone can also use the free grader at `/grade` without an account; signing up unlocks the fixes.
 
 ## Growth features (v2.1)
 
 Free grader, weekly monitoring with email alerts, agency tools (client folders, bulk reviews, branded and white-label PDF reports), AI search readiness checks, yearly plans, a partner programme, user feedback and an admin growth view. See GROWTH.md for the 90-day plan and DEPLOY.md for the extra setup.
+
+## Lead widget (v2.3)
+
+Agency customers can put a free website check on their own site (App → **Lead widget**). Visitors enter their page and email, see a score and the three biggest problems in the agency's logo and colours, and the agency gets an email per lead with the full report. Install is two lines (`<div data-pagegrade-widget="w_…">` plus `/embed.js`) or an iframe. The page at `/embed/<id>` is self-contained HTML with its own nonce-based CSP whose `frame-ancestors` lists only the sites the agency allows. Checks run as reviews with origin `widget`: they jump the queue (a visitor is waiting), never use the review allowance, have their own monthly allowance (`WIDGET_AUDITS` in `src/lib/plans.ts`), are limited to 3 per visitor per day per widget and 5 running per agency, and stay out of History, Pages and Compare. Leads can be marked, exported as CSV and deleted together with their report.
 
 ## Launch release (v2.2): the business plan inside the product
 

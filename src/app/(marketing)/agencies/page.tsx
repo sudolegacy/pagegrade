@@ -47,6 +47,7 @@ const INCLUDED = [
   `Bulk reviews: up to ${BULK_MAX} pages in one go`,
   'Client folders that keep each client’s reviews and weekly checks together',
   `${agency.limits.monitors} pages re-checked every week, with email alerts`,
+  `A lead widget for your own website: visitors check their page, you get the lead and the full report (${agency.limits.widget} checks a month, on top of your reviews)`,
   'Your name, logo and colour on shared reports and PDFs, plus an optional white label that hides PageGrade’s name',
   'Everything in Pro, including competitor checks and priority in the review queue',
 ];
@@ -74,6 +75,7 @@ export default function AgenciesPage() {
     { q: 'Do you audit my own website?', a: 'No. The free pack is for businesses you want to win as clients, so you have something useful to send them. You can always try the free grader on your own pages.' },
     { q: 'Can I put my logo on the audits?', a: 'Yes. Every audit in your pack carries your agency’s name and logo, and PageGrade’s name is hidden. On the Agency plan you can do the same for every report and PDF you share: your logo and colour, with an optional white label that hides PageGrade’s name.' },
     { q: 'Can I review many pages at once?', a: `Yes. Bulk review on the Agency plan takes up to ${BULK_MAX} pages in one go and files the results in a client folder.` },
+    { q: 'Can I put the check on my own website?', a: `Yes. The Agency plan includes a lead widget: paste two lines into your site and visitors can check their own page in about a minute. They see their score and biggest problems in your colours; you get their name, email and the full report, so your follow-up opens with evidence. It includes ${agency.limits.widget} checks a month, separate from your reviews.` },
     { q: 'How accurate is it?', a: 'Some checks are measured directly from the page, such as text size, contrast and speed. Others, such as how clear the offer is, are judged by AI against written criteria, in three independent passes with the median taken. Every finding points to the spot on the screenshot and quotes the page’s own words, so you can check it yourself. It is a well-evidenced expert review, not a guarantee of results: PageGrade cannot see a business’s analytics or its visitors.' },
     { q: 'Which pages can you audit?', a: 'Any public web page. Pages behind a login cannot be reviewed, and a few sites block automated browsers. If one of your three cannot be done, we will let you know.' },
     { q: 'Do you contact the businesses on my list?', a: 'No. We use the addresses only to make your pack, and we send the audits to you, not to them.' },

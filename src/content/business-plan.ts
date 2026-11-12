@@ -234,7 +234,7 @@ const includes: Record<PlanId, string> = {
   free: `${PLANS.free.reviews} reviews in total`,
   starter: `${PLANS.starter.reviews} reviews a month, ${PLANS.starter.limits.monitors} weekly check`,
   pro: `${PLANS.pro.reviews} reviews a month, ${PLANS.pro.limits.monitors} weekly checks (competitors too), PDF reports, priority`,
-  agency: `${PLANS.agency.reviews} reviews a month, ${PLANS.agency.limits.monitors} weekly checks, your branding and white label, client folders, bulk reviews of up to ${BULK_MAX} pages`,
+  agency: `${PLANS.agency.reviews} reviews a month, ${PLANS.agency.limits.monitors} weekly checks, your branding and white label, client folders, bulk reviews of up to ${BULK_MAX} pages, a lead widget for your own site`,
 };
 export const PRICE_TABLE: PriceRow[] = (['free', 'starter', 'pro', 'agency'] as const).map((id) => ({
   plan: PLANS[id].name,
@@ -693,7 +693,7 @@ export const ROADMAP: RoadmapItem[] = [
   { phase: 'Month 1', item: 'An agencies page with the pack offer, a sample pack and a booking link', why: 'Emails and posts can link to it, and it converts visitors on its own.', size: 'Small', shipped: true, note: 'The agencies page and pack request form. Requests become leads and email you.' },
   { phase: 'Months 2–3', item: 'Branding for each client folder', why: 'Packs without a demo account, and share links that are safe to send.', size: 'Medium', shipped: true, note: 'Each client folder can carry its own name, colour and logo, used on that folder\'s shared reports and PDFs. "Build pack" in the Pipeline creates the folder and queues the audits from a lead in one click.' },
   { phase: 'Later', item: 'A bigger agency plan (limits in plans.ts and new Stripe prices)', why: 'More revenue from the agencies that use PageGrade most.', size: 'Small, when 5+ agencies are near 200 reviews', shipped: false },
-  { phase: 'Later', item: 'A grader widget agencies put on their own site, with their branding', why: 'Agencies capture their own leads with PageGrade, so they never cancel.', size: 'Large, when 3+ agencies ask', shipped: false },
+  { phase: 'Later', item: 'A grader widget agencies put on their own site, with their branding', why: 'Agencies capture their own leads with PageGrade, so they never cancel.', size: 'Large, when 3+ agencies ask', shipped: true, note: 'App → Lead widget (Agency plan): a two-line embed in the agency’s colours. Visitors see their score and top problems; the agency gets an email per lead and the full report. 100 checks a month, separate from reviews. Mention it in every agency reply and on onboarding calls.' },
 ];
 
 // ─── Weekly numbers, routine, first week, risks ──────────────────────────────

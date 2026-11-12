@@ -49,7 +49,7 @@ function topFixes(raw: string | null): string[] {
  * Always scoped to `userId`; the filters mirror the History page.
  */
 export function reviewsCsv(userId: string, filter: ReviewExportFilter = {}): { csv: string; count: number } {
-  const where = ['r.user_id = ?', 'r.deleted_at IS NULL'];
+  const where = ['r.user_id = ?', 'r.deleted_at IS NULL', "r.origin != 'widget'"];
   const args: (string | number)[] = [userId];
   if (filter.batchId) { where.push('r.batch_id = ?'); args.push(filter.batchId.slice(0, 40)); }
   if (filter.clientId) { where.push('r.client_id = ?'); args.push(filter.clientId.slice(0, 40)); }

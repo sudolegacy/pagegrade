@@ -49,7 +49,9 @@ const config = {
     ];
   },
   async headers() {
-    return [{ source: '/:path*', headers: securityHeaders }];
+    // /embed/* is the lead widget, which agencies' websites show in an iframe: it sends its own
+    // CSP (frame-ancestors limited to the agency's sites), so it must not get X-Frame-Options: DENY.
+    return [{ source: '/((?!embed/).*)', headers: securityHeaders }];
   },
 };
 

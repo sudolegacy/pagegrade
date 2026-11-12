@@ -70,6 +70,7 @@ Launch the free grader, not the paid app. Prepare a 30-second demo video, 5 scre
 ## From £1k to £10k a month
 
 - **Agencies first.** Offer each agency that replies a free month of Agency in return for a call and a testimonial.
+- **The lead widget sells Agency.** It turns PageGrade from a cost into a source of clients: the agency's own visitors check their sites and the agency gets the leads with the full report. Lead with it on agency calls ("put this on your site this afternoon"), install it with them during onboarding, and ask after a month how many leads it brought. Every widget without white label also links back to PageGrade.
 - **Partners.** Invite every agency customer to the partner programme. The white-label PDF is what they'll send to clients.
 - **Yearly plans.** Mention yearly billing at checkout and in emails to customers. Fewer yearly customers cancel.
 - **Listings.** Product Hunt and software directories such as G2, Capterra, SaaSHub and AlternativeTo. A Webflow app, Framer plugin or Shopify app is a separate project, because each needs its own app and review process. Build one only once customers ask for it.

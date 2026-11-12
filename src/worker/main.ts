@@ -16,6 +16,7 @@ import { analysisCache, backupDatabase, cleanReviewWorkFiles, pruneExpired } fro
 import { reconcileSubscriptions } from '../lib/server/billing';
 import { monitorCheckFailed, monitorCheckFinished, scheduleDueMonitors, type MonitorOutcome } from '../lib/server/monitors';
 import { pruneGuestGrades } from '../lib/server/grader';
+import { notifyWidgetLead } from '../lib/server/widget';
 import { runLifecycle } from '../lib/server/lifecycle';
 import { nextDigestAt, sendFounderDigest } from '../lib/server/digest';
 import { engineConfigFromEnv, ReviewError, runPipeline } from '../lib/engine/pipeline';
@@ -39,6 +40,8 @@ const HEARTBEAT_MS = 15_000;
 const HARD_TIMEOUT_MS = Number(process.env.REVIEW_TIMEOUT_MS || 9 * 60_000);
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const log = (...args: unknown[]) => console.log(new Date().toISOString(), '[worker]', ...args);
+/** A lead-widget audit finished or failed: the agency gets one email about the lead either way. */
+const notifyLead = (id: string) => notifyWidgetLead(id).catch((e) => log('lead email failed', (e as Error).message));
 
 let stopping = false;
 const active = new Map<string, Promise<void>>();
@@ -69,6 +72,8 @@ async function processReview(job: ClaimedReview) {
     const owner = reviewOwner(job.id);
     if (job.origin === 'monitor') {
       await notifyMonitor(monitorCheckFinished(job.id, report), owner);
+    } else if (job.origin === 'widget') {
+      await notifyLead(job.id);
     } else if (owner?.notify_on_complete) {
       await mailer.reviewComplete(owner.email, { url: `${env.appUrl}/app/reviews/${job.id}`, score: report.score, grade: report.grade, pageUrl: report.finalUrl })
         .catch((e) => log('email failed', (e as Error).message));
@@ -81,6 +86,8 @@ async function processReview(job: ClaimedReview) {
       const owner = reviewOwner(job.id);
       if (job.origin === 'monitor') {
         await notifyMonitor(monitorCheckFailed(job.id, error.message), owner);
+      } else if (job.origin === 'widget') {
+        await notifyLead(job.id);
       } else if (owner?.notify_on_complete) {
         await mailer.reviewFailed(owner.email, { url: `${env.appUrl}/app/new`, pageUrl: job.url, reason: error.message })
           .catch((e) => log('email failed', (e as Error).message));
@@ -92,6 +99,7 @@ async function processReview(job: ClaimedReview) {
       log(`giving up on ${job.id} at ${stage}:`, error);
       failReview(job.id, WORKER_ID, 'internal', 'Something went wrong on our side while reviewing this page. You have not been charged; please try again.');
       if (job.origin === 'monitor') await notifyMonitor(monitorCheckFailed(job.id, 'Something went wrong on our side during the check.'), reviewOwner(job.id));
+      if (job.origin === 'widget') await notifyLead(job.id);
     }
     // A hung browser may still hold resources after a timeout: restart cleanly.
     if (timedOut) { log('restarting worker after timeout'); clearInterval(beat); await sleep(500); process.exit(1); }
@@ -112,7 +120,10 @@ async function loop(slot: number) {
     }
     if (mode === 'closed') { await sleep(60_000); continue; }
     const { claimed, abandoned } = claimNextReview(WORKER_ID, LEASE_MS, { paidOnly: mode === 'paid_only' });
-    if (abandoned.length) log(`gave up on abandoned reviews: ${abandoned.join(', ')}`);
+    if (abandoned.length) {
+      log(`gave up on abandoned reviews: ${abandoned.join(', ')}`);
+      for (const id of abandoned) await notifyLead(id);
+    }
     if (!claimed) { await sleep(1500 + slot * 250); continue; }
     const task = processReview(claimed);
     active.set(claimed.id, task);
