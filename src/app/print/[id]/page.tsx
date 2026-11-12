@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { checkPrintToken } from '@/lib/server/pdf';
 import { getReview } from '@/lib/server/reviews';
 import { findUserById } from '@/lib/server/users';
-import { brandFor } from '@/lib/server/brand';
+import { reportBrand } from '@/lib/server/brand';
 import { ReportView } from '@/components/report/report-view';
 import { assetsFor } from '@/components/report/assets';
 import { ReportHeader } from '@/components/report/report-header';
@@ -27,7 +27,7 @@ export default async function PrintPage({ params, searchParams }: { params: Prom
   if (!userId || !token) notFound();
   const review = getReview(id, userId);
   if (!review?.report) notFound();
-  const brand = brandFor(findUserById(userId));
+  const brand = reportBrand(findUserById(userId), review.clientId);
   const assets = assetsFor(review.report, (file) => `/api/reviews/${id}/files/${file}?pt=${encodeURIComponent(token)}`);
   const header = (
     <div className="space-y-6">
