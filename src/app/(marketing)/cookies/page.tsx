@@ -24,6 +24,9 @@ export default function CookiesPage() {
       </div>
       <p>These cookies are strictly necessary to provide the service you ask for, so under the Privacy and Electronic Communications Regulations they do not need your consent. You can block or delete cookies in your browser settings, but you will not be able to sign in without the session cookie.</p>
 
+      <h2>Website checks on other websites</h2>
+      <p>Some PageGrade customers put our website check on their own site. If you start a check there, your browser keeps a note of it in session storage (not a cookie), so reloading the page does not lose your result. The note holds a random identifier and access key for the check, the address of the page being checked and the time you started it. It is used for nothing else and is deleted when you close the tab. Like the cookies above, it is strictly necessary for the check you asked for.</p>
+
       <h2>Payments</h2>
       <p>When you upgrade or manage your plan, you are taken to pages run by Stripe. Stripe sets its own cookies there, for example to prevent fraud. Those cookies are covered by <a href="https://stripe.com/cookies-policy/legal" rel="noopener noreferrer">Stripe&rsquo;s cookie policy</a>.</p>
 

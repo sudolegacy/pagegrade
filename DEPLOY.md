@@ -87,11 +87,11 @@ The worker uses SQLite's online backup API approximately daily and retains the n
 
 ## v2.3 lead widget
 
-- **Database.** Migration 5 adds the `widgets` and `widget_leads` tables; it runs automatically on start and is additive, so older code ignores it. Back up the volume first as usual.
+- **Database.** Migration 5 adds the `widgets` and `widget_leads` tables; it runs automatically on start and is additive, so older code ignores it. Back up the volume first as usual. Before rolling back to an earlier version, wait until no widget checks are queued: earlier versions would run them as ordinary reviews and charge them to the agency's review allowance.
 - **No new variables.** The embed snippet uses `APP_URL`, so the canonical HTTPS origin must be set before agencies copy it (changing it later breaks installed snippets). Lead emails need SMTP like every other email.
 - **Headers.** `/embed/*` is excluded from the site-wide security headers in `next.config.mjs` (they forbid framing) and sends its own CSP: nonce-only scripts and styles, `connect-src 'self'`, and `frame-ancestors` limited to the sites listed in the widget settings (anywhere if none are listed). After deploying, check `curl -sI $APP_URL/embed/<id>` shows that CSP and no `X-Frame-Options`, and that other pages still send `X-Frame-Options: DENY`.
 - **Cost.** Each visitor check is a full review (about $0.02 of AI). Limits: 100 a month per Agency account, 3 per visitor per day per widget, 5 running per agency; the daily AI budget and hard cap still apply. Paying agencies' widget checks go to the front of the queue.
-- **Privacy.** The privacy policy and terms now describe the widget: the agency is the controller of its leads and PageGrade its processor. Have this reviewed with the rest of the legal pages before launch.
+- **Privacy.** The privacy policy, terms and cookie policy now describe the widget: the agency is the controller of its leads and PageGrade its processor, and the widget keeps an in-progress check in the visitor's session storage. Have this reviewed with the rest of the legal pages before launch.
 
 ## Known limits
 
