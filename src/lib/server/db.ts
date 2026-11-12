@@ -181,6 +181,62 @@ const MIGRATIONS: string[] = [
   );
   INSERT OR IGNORE INTO users (id, email, name, password_hash, notify_on_complete, notify_monitor, created_at, updated_at)
     VALUES ('guest', 'guest@pagegrade.invalid', 'Free grader', '!', 0, 0, 0, 0);`,
+  // 2.2: agency prospect-pack requests (the plan's main sales channel) and lifecycle email tracking.
+  `CREATE TABLE leads (
+    id TEXT PRIMARY KEY,
+    kind TEXT NOT NULL CHECK (kind IN ('pack', 'call', 'partner', 'other')),
+    name TEXT NOT NULL DEFAULT '',
+    email TEXT NOT NULL,
+    company TEXT NOT NULL DEFAULT '',
+    website TEXT NOT NULL DEFAULT '',
+    message TEXT NOT NULL DEFAULT '',
+    prospects TEXT NOT NULL DEFAULT '[]',
+    source TEXT NOT NULL DEFAULT '',
+    status TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'pack_sent', 'won', 'lost')),
+    note TEXT NOT NULL DEFAULT '',
+    user_id TEXT,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
+  CREATE INDEX leads_status ON leads(status, created_at DESC);
+  CREATE INDEX leads_email ON leads(email);
+  CREATE TABLE lifecycle_emails (
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    kind TEXT NOT NULL,
+    sent_at INTEGER NOT NULL,
+    PRIMARY KEY (user_id, kind)
+  );`,
+  // 2.2 (second part): prospect packs built from leads, client-folder branding, weekly outreach numbers and metric history.
+  `ALTER TABLE clients ADD COLUMN brand_name TEXT NOT NULL DEFAULT '';
+  ALTER TABLE clients ADD COLUMN brand_color TEXT NOT NULL DEFAULT '';
+  ALTER TABLE clients ADD COLUMN brand_logo TEXT;
+  ALTER TABLE leads ADD COLUMN client_id TEXT;
+  ALTER TABLE leads ADD COLUMN batch_id TEXT;
+  CREATE TABLE outreach_weeks (
+    week_start INTEGER PRIMARY KEY,
+    prospects_emailed INTEGER NOT NULL DEFAULT 0,
+    replies INTEGER NOT NULL DEFAULT 0,
+    pack_requests INTEGER NOT NULL DEFAULT 0,
+    opt_outs INTEGER NOT NULL DEFAULT 0,
+    bounces INTEGER NOT NULL DEFAULT 0,
+    calls INTEGER NOT NULL DEFAULT 0,
+    note TEXT NOT NULL DEFAULT '',
+    updated_at INTEGER NOT NULL
+  );
+  CREATE TABLE metric_snapshots (
+    week_start INTEGER PRIMARY KEY,
+    mrr_gbp REAL NOT NULL DEFAULT 0,
+    paying INTEGER NOT NULL DEFAULT 0,
+    agencies INTEGER NOT NULL DEFAULT 0,
+    users INTEGER NOT NULL DEFAULT 0,
+    new_users INTEGER NOT NULL DEFAULT 0,
+    grades INTEGER NOT NULL DEFAULT 0,
+    pack_requests INTEGER NOT NULL DEFAULT 0,
+    open_leads INTEGER NOT NULL DEFAULT 0,
+    cancellations INTEGER NOT NULL DEFAULT 0,
+    spend_usd REAL NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL
+  );`,
 ];
 
 let instance: Database.Database | null = null;

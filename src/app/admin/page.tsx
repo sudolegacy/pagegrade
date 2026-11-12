@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { adminOverview } from '@/lib/server/admin';
 import { Badge, type BadgeTone } from '@/components/ui/badge';
 import { hostPath } from '@/lib/format';
@@ -64,7 +65,7 @@ export default function AdminPage() {
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-[26px] font-semibold text-ink">Admin</h1>
-          <p className="mt-1 text-[14.5px] text-zinc-600">Live operational view. Times are UK time; refresh the page to update.</p>
+          <p className="mt-1 text-[14.5px] text-zinc-600">Live operational view. Times are UK time; refresh the page to update. Targets and the plan: <Link href="/admin/plan" className="link">Business plan</Link>.</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Badge tone={workerTone} dot>{o.worker ? `Worker seen ${ago(o.worker.at, t)} · ${o.worker.active} active` : 'Worker has never reported'}</Badge>
@@ -75,7 +76,7 @@ export default function AdminPage() {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="Users" value={o.users.total} detail={`${o.users.verified} verified · ${o.users.lastWeek} new this week`} />
         <Stat label="Paying" value={paidTotal} detail={paidTotal ? `£${mrr}/month list price${o.pastDue ? ` · ${o.pastDue} past due` : ''}` : 'No active subscriptions'} tone={o.pastDue ? 'amber' : undefined} />
-        <Stat label="AI spend today (UTC)" value={usd(o.spendToday)} detail={`Budget ${usd(o.budgetUsd)} · 30 days ${usd(o.month.spend)}`} tone={o.spendToday >= o.budgetUsd ? 'red' : o.spendToday >= o.budgetUsd * 0.8 ? 'amber' : undefined} />
+        <Stat label="AI spend today (UTC)" value={usd(o.spendToday)} detail={`Budget ${usd(o.budgetUsd)} · hard cap ${usd(o.hardCapUsd)} · 30 days ${usd(o.month.spend)}`} tone={o.spendToday >= o.hardCapUsd ? 'red' : o.spendToday >= o.budgetUsd * 0.8 ? 'amber' : undefined} />
         <Stat label="Last 24 hours" value={o.day.complete} detail={`complete · ${o.day.failed} failed (${failRate}%)${o.day.avgMs ? ` · avg ${Math.round(o.day.avgMs / 1000)}s` : ''}`} tone={failRate >= 25 && o.day.finished >= 4 ? 'red' : undefined} />
       </div>
 

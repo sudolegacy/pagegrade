@@ -17,10 +17,27 @@ Every plan receives the full report. Failed reviews do not consume an allowance.
 
 Free grader, weekly monitoring with email alerts, agency tools (client folders, bulk reviews, branded and white-label PDF reports), AI search readiness checks, yearly plans, a partner programme, user feedback and an admin growth view. See GROWTH.md for the 90-day plan and DEPLOY.md for the extra setup.
 
+## Launch release (v2.2): the business plan inside the product
+
+- **Admin → Business plan** (`/admin/plan`): the complete business and marketing plan (goal, customers, offer, pricing terms, budget, unit economics, projections, dated MRR checkpoints, sales workflow, outreach templates, compliance rules, marketing calendar, retention playbook, roadmap, routines, risks) shown next to the live numbers from the database, a launch checklist computed from your configuration, and the lead pipeline.
+- **`/agencies`**: the landing page for the plan's main offer, three free branded audits of prospects an agency wants to win, with a pack-request form. Requests become leads and email you.
+- **Founder emails**: a sign-up alert for every new account, a lead alert for every pack request and a weekly digest (`FOUNDER_ALERT_EMAIL`).
+- **Lifecycle emails**: first-review nudge, free-reviews-used upgrade note, Agency onboarding and day 7 / day 25 check-ins, each sent once per user by the worker.
+- **CSV export** of review results from History and client folders.
+- **Prospect packs in one click**: on a lead, **Build pack** creates a client folder branded with the agency's name, queues the audits, tracks progress with PDF links and drafts the reply. Client folders can carry their own name, colour and logo, used on that folder's shared reports and PDFs.
+- **Weekly check-in**: log the Outreach Autopilot's numbers each Monday and the plan page shows pack-request, opt-out and bounce rates against the plan's targets, with a week-by-week history filled by automatic metric snapshots.
+- **AI budget that protects customers**: at the daily budget, free usage pauses; paying customers continue up to a hard cap (`AI_DAILY_HARD_CAP_USD`, default three times the budget).
+- **Agency onboarding checklist** on the overview (branding, client folder, bulk review, five weekly checks) and a guide, *How to win new clients by sending free landing page audits*.
+- `outreach/`: the free Outreach Autopilot (Google Sheets + Apps Script) that finds emails, sends, follows up and stops on reply. `docs/business-plan-v2.pdf`: the written plan this release implements.
+
+## Repository layout
+
+The Next.js app lives at the repository root (`src/`, `public/`, `tests/`, `bench/`, `scripts/`); `outreach/` holds the sales kit and `docs/` the plan. `.github/workflows/ci.yml` runs the type check, unit tests and build on every pull request.
+
 ## Get started locally
 
 1. Install Node.js 22 or later, npm and Chromium. From the project directory, run `npm ci`.
-2. Copy `.env.example` to `.env.local`, set `OPENAI_API_KEY`, select models available to your API account and set `CHROMIUM_PATH` to the installed browser. Set `REQUIRE_EMAIL_VERIFICATION=false` for a local run without SMTP. Never commit `.env.local`.
+2. Copy `.env.example` to `.env.local`, set `OPENAI_API_KEY`, select models available to your API account and set `CHROMIUM_PATH` to the installed browser. Set `REQUIRE_EMAIL_VERIFICATION=false` for a local run without SMTP. Add your own email to `ADMIN_EMAILS` to open `/admin` and `/admin/plan`. Never commit `.env.local`.
 3. Run the web app with `npm run dev`, and in another terminal run `npx tsx --env-file=.env.local src/worker/main.ts`. Visit http://localhost:3000. Next.js reads `.env.local` for the web app; the worker command loads it explicitly.
 4. For a production-style local run, run `npm run build`, then `node --env-file=.env.local scripts/start.mjs` to start both web and worker.
 

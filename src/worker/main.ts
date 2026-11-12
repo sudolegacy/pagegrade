@@ -10,12 +10,14 @@ import { db, kv } from '../lib/server/db';
 import { env } from '../lib/server/env';
 import { mailer } from '../lib/server/mail';
 import {
-  claimNextReview, completeReview, failReview, heartbeat, releaseReview, reviewDir, reviewOwner, spendToday, MAX_ATTEMPTS, type ClaimedReview,
+  capacityMode, claimNextReview, completeReview, failReview, heartbeat, releaseReview, reviewDir, reviewOwner, MAX_ATTEMPTS, type CapacityMode, type ClaimedReview,
 } from '../lib/server/reviews';
 import { analysisCache, backupDatabase, cleanReviewWorkFiles, pruneExpired } from '../lib/server/maintenance';
 import { reconcileSubscriptions } from '../lib/server/billing';
 import { monitorCheckFailed, monitorCheckFinished, scheduleDueMonitors, type MonitorOutcome } from '../lib/server/monitors';
 import { pruneGuestGrades } from '../lib/server/grader';
+import { runLifecycle } from '../lib/server/lifecycle';
+import { nextDigestAt, sendFounderDigest } from '../lib/server/digest';
 import { engineConfigFromEnv, ReviewError, runPipeline } from '../lib/engine/pipeline';
 import { intakeSchema } from '../lib/engine/intake';
 
@@ -35,7 +37,6 @@ async function notifyMonitor(outcome: MonitorOutcome | null, owner?: { email: st
 const LEASE_MS = 90_000;
 const HEARTBEAT_MS = 15_000;
 const HARD_TIMEOUT_MS = Number(process.env.REVIEW_TIMEOUT_MS || 9 * 60_000);
-const BUDGET_USD = Number(process.env.AI_DAILY_BUDGET_USD || 25);
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const log = (...args: unknown[]) => console.log(new Date().toISOString(), '[worker]', ...args);
 
@@ -99,16 +100,18 @@ async function processReview(job: ClaimedReview) {
   }
 }
 
-let budgetWarned = false;
+let lastMode: CapacityMode = 'open';
 async function loop(slot: number) {
   while (!stopping) {
-    if (spendToday() >= BUDGET_USD) {
-      if (!budgetWarned) { log(`daily AI budget of $${BUDGET_USD} reached; pausing new reviews until midnight UTC`); budgetWarned = true; }
-      await sleep(60_000);
-      continue;
+    const mode = capacityMode();
+    if (mode !== lastMode) {
+      lastMode = mode;
+      if (mode === 'closed') log(`hard daily AI cap of $${env.aiDailyHardCapUsd} reached; pausing every review until midnight UTC`);
+      else if (mode === 'paid_only') log(`daily AI budget of $${env.aiDailyBudgetUsd} reached; only paying customers' reviews continue until midnight UTC`);
+      else log('daily AI spend is under budget again; taking every review');
     }
-    budgetWarned = false;
-    const { claimed, abandoned } = claimNextReview(WORKER_ID, LEASE_MS);
+    if (mode === 'closed') { await sleep(60_000); continue; }
+    const { claimed, abandoned } = claimNextReview(WORKER_ID, LEASE_MS, { paidOnly: mode === 'paid_only' });
     if (abandoned.length) log(`gave up on abandoned reviews: ${abandoned.join(', ')}`);
     if (!claimed) { await sleep(1500 + slot * 250); continue; }
     const task = processReview(claimed);
@@ -139,6 +142,13 @@ async function main() {
   every(3600_000, 'prune', async () => { pruneExpired(); const n = await pruneGuestGrades(); if (n) log(`removed ${n} unclaimed free grades`); });
   every(10 * 60_000, 'monitors', () => { const ids = scheduleDueMonitors(); if (ids.length) log(`queued ${ids.length} weekly checks`); });
   every(6 * 3600_000, 'reconcile', async () => { const n = await reconcileSubscriptions(); if (n) log(`reconciled ${n} subscriptions`); });
+  every(24 * 3600_000, 'lifecycle', async () => {
+    const { sent, failed, byKind } = await runLifecycle();
+    if (sent || failed) log(`lifecycle emails: ${sent} sent, ${failed} failed`, byKind);
+  });
+  // The first digest waits for Monday morning instead of going out on first start; after that it repeats every seven days.
+  if (!kv.get('task:digest')) kv.set('task:digest', String(nextDigestAt() - 7 * 24 * 3600_000));
+  every(7 * 24 * 3600_000, 'digest', async () => { if ((await sendFounderDigest()).sent) log('founder digest sent'); });
 
   const shutdown = async (signal: string) => {
     if (stopping) return;
