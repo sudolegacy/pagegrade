@@ -10,7 +10,7 @@ import { db, kv } from '../lib/server/db';
 import { env } from '../lib/server/env';
 import { mailer } from '../lib/server/mail';
 import {
-  claimNextReview, completeReview, failReview, heartbeat, releaseReview, reviewDir, reviewOwner, spendToday, MAX_ATTEMPTS, type ClaimedReview,
+  capacityMode, claimNextReview, completeReview, failReview, heartbeat, releaseReview, reviewDir, reviewOwner, MAX_ATTEMPTS, type ClaimedReview,
 } from '../lib/server/reviews';
 import { analysisCache, backupDatabase, cleanReviewWorkFiles, pruneExpired } from '../lib/server/maintenance';
 import { reconcileSubscriptions } from '../lib/server/billing';
@@ -37,7 +37,6 @@ async function notifyMonitor(outcome: MonitorOutcome | null, owner?: { email: st
 const LEASE_MS = 90_000;
 const HEARTBEAT_MS = 15_000;
 const HARD_TIMEOUT_MS = Number(process.env.REVIEW_TIMEOUT_MS || 9 * 60_000);
-const BUDGET_USD = Number(process.env.AI_DAILY_BUDGET_USD || 25);
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const log = (...args: unknown[]) => console.log(new Date().toISOString(), '[worker]', ...args);
 
