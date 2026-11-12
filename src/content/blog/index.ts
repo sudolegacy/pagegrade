@@ -8,6 +8,7 @@
 import { post as aiSearchVisibility } from './posts/ai-search-visibility-uk';
 import { post as localAiSearch } from './posts/local-seo-ai-search-uk';
 import { post as aiVisibilityAudit } from './posts/ai-visibility-audit';
+import { post as winClientsWithFreeAudits } from './posts/win-clients-with-free-audits';
 
 export type CategoryId = 'ai-search' | 'local-seo' | 'landing-pages';
 export type AuthorId = 'pagegrade';
@@ -76,7 +77,7 @@ export const AUTHORS: Record<AuthorId, Author> = {
   },
 };
 
-const ALL_POSTS: Post[] = [aiSearchVisibility, localAiSearch, aiVisibilityAudit];
+const ALL_POSTS: Post[] = [aiSearchVisibility, localAiSearch, aiVisibilityAudit, winClientsWithFreeAudits];
 
 const showDrafts = process.env.NODE_ENV !== 'production';
 
