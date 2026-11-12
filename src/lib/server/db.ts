@@ -206,6 +206,37 @@ const MIGRATIONS: string[] = [
     sent_at INTEGER NOT NULL,
     PRIMARY KEY (user_id, kind)
   );`,
+  // 2.2 (second part): prospect packs built from leads, client-folder branding, weekly outreach numbers and metric history.
+  `ALTER TABLE clients ADD COLUMN brand_name TEXT NOT NULL DEFAULT '';
+  ALTER TABLE clients ADD COLUMN brand_color TEXT NOT NULL DEFAULT '';
+  ALTER TABLE clients ADD COLUMN brand_logo TEXT;
+  ALTER TABLE leads ADD COLUMN client_id TEXT;
+  ALTER TABLE leads ADD COLUMN batch_id TEXT;
+  CREATE TABLE outreach_weeks (
+    week_start INTEGER PRIMARY KEY,
+    prospects_emailed INTEGER NOT NULL DEFAULT 0,
+    replies INTEGER NOT NULL DEFAULT 0,
+    pack_requests INTEGER NOT NULL DEFAULT 0,
+    opt_outs INTEGER NOT NULL DEFAULT 0,
+    bounces INTEGER NOT NULL DEFAULT 0,
+    calls INTEGER NOT NULL DEFAULT 0,
+    note TEXT NOT NULL DEFAULT '',
+    updated_at INTEGER NOT NULL
+  );
+  CREATE TABLE metric_snapshots (
+    week_start INTEGER PRIMARY KEY,
+    mrr_gbp REAL NOT NULL DEFAULT 0,
+    paying INTEGER NOT NULL DEFAULT 0,
+    agencies INTEGER NOT NULL DEFAULT 0,
+    users INTEGER NOT NULL DEFAULT 0,
+    new_users INTEGER NOT NULL DEFAULT 0,
+    grades INTEGER NOT NULL DEFAULT 0,
+    pack_requests INTEGER NOT NULL DEFAULT 0,
+    open_leads INTEGER NOT NULL DEFAULT 0,
+    cancellations INTEGER NOT NULL DEFAULT 0,
+    spend_usd REAL NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL
+  );`,
 ];
 
 let instance: Database.Database | null = null;
