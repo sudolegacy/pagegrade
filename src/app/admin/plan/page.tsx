@@ -6,9 +6,11 @@ import { Alert } from '@/components/ui/field';
 import { Meter } from '@/components/ui/score';
 import { CopyButton } from '@/components/app/copy-button';
 import { LeadNote, LeadStatusSelect } from '@/components/app/lead-status-button';
+import { OutreachWeekForm } from '@/components/app/outreach-week-form';
 import { cn } from '@/lib/cn';
 import { hostPath } from '@/lib/format';
 import { currentUser, isAdmin } from '@/lib/server/session';
+import { rateStatus, type RateStatus } from '@/lib/server/metrics-history';
 import { planMetrics, type CheckpointStatus, type ChecklistItem } from '@/lib/server/plan-metrics';
 import { LEAD_STATUSES, listLeads, type Lead, type LeadKind } from '@/lib/server/leads';
 import {
@@ -17,7 +19,7 @@ import {
   OUTREACH_TEMPLATES, OWNER_STEPS, PACK_RULE, PACK_STEPS, PASSES_TARGET, PLACEHOLDERS, PLAN_META, PLAN_SECTIONS, POSITIONING, PRICE_RISE_STEPS,
   PRICE_TABLE, PRICING_RULES, PROJECTION_NOTES, PROJECTIONS, PROSPECT_SOURCES, QUALIFICATION, REPLY_TEMPLATES, RETENTION, RISKS, ROADMAP,
   ROUTINE_DAILY, ROUTINE_NOTE, ROUTINE_WEEKLY, SAFEGUARDS, SALES_FLOW, SEND_LIMITS, STRATEGY_AVOID, STRATEGY_LATER, STRATEGY_NOW, TARGETS, TAX,
-  WEEK_TWO_CHECK, WEEKLY_METRICS, WHO_DOES_WHAT, gbp, mailboxCeiling, planDate, sectionTitle, triggerStatus,
+  WEEK_TWO_CHECK, WEEKLY_METRICS, WHO_DOES_WHAT, gbp, mailboxCeiling, planDate, planWeekdayDate, sectionTitle, triggerStatus,
   type LiveNumbers, type MetricId, type PlanSectionId,
 } from '@/content/business-plan';
 

@@ -50,11 +50,15 @@ export const reviewDir = (id: string) => {
 
 export type Usage = { plan: Plan; used: number; limit: number; remaining: number; unlimited: boolean; period: Plan['period']; resetsAt: number | null };
 
+/** Subscription states that keep a paid plan; the queue SQL uses the same list. */
+const PAID_STATUSES = ['active', 'trialing', 'past_due'];
+const PAID_STATUSES_SQL = `(${PAID_STATUSES.map((s) => `'${s}'`).join(', ')})`;
+
 /** The plan a user is entitled to right now (a lapsed subscription falls back to Free). */
 export function entitledPlan(user: User): Plan {
   const plan = PLANS[user.plan] ?? PLANS.free;
   if (plan.id === 'free') return plan;
-  return ['active', 'trialing', 'past_due'].includes(user.planStatus) ? plan : PLANS.free;
+  return PAID_STATUSES.includes(user.planStatus) ? plan : PLANS.free;
 }
 
 /** Adds calendar months in UTC, clamping to the end of shorter months (31 Jan + 1 month = 28/29 Feb). */
@@ -260,13 +264,19 @@ export const MAX_ATTEMPTS = 3;
 /**
  * Atomically claims the next queued review. Paid Pro/Agency reviews go first,
  * weekly monitor checks last; within a tier, people take turns, so one bulk
- * batch of 25 pages does not hold up everyone else. Reviews whose worker
- * stopped heartbeating are requeued, or failed after MAX_ATTEMPTS so a poison
- * page cannot loop forever.
+ * batch of 25 pages does not hold up everyone else. With `paidOnly`, reviews
+ * from free accounts and the free grader stay queued instead (the worker asks
+ * for this once the daily budget is spent). Reviews whose worker stopped
+ * heartbeating are requeued, or failed after MAX_ATTEMPTS so a poison page
+ * cannot loop forever.
  */
-export function claimNextReview(workerId: string, leaseMs: number): { claimed: ClaimedReview | null; abandoned: string[] } {
+export function claimNextReview(workerId: string, leaseMs: number, opts: { paidOnly?: boolean } = {}): { claimed: ClaimedReview | null; abandoned: string[] } {
   const conn = db();
   const t = now();
+  // Filtering the candidates, not the winner, keeps a free job from holding up a paid one behind it.
+  const candidates = opts.paidOnly
+    ? `AND r.origin != 'guest' AND r.user_id IN (SELECT id FROM users WHERE plan != 'free' AND plan_status IN ${PAID_STATUSES_SQL})`
+    : '';
   return conn.transaction(() => {
     const abandoned = (conn.prepare("SELECT id FROM reviews WHERE status = 'running' AND lease_until < ? AND attempts >= ?").all(t, MAX_ATTEMPTS) as { id: string }[]).map((r) => r.id);
     if (abandoned.length) {
@@ -279,9 +289,9 @@ export function claimNextReview(workerId: string, leaseMs: number): { claimed: C
         SELECT r.*, ROW_NUMBER() OVER (
           PARTITION BY CASE WHEN r.origin = 'guest' THEN r.id WHEN r.origin = 'monitor' THEN r.user_id || ':monitor' ELSE r.user_id END
           ORDER BY r.created_at) AS turn
-        FROM reviews r WHERE r.status = 'queued' AND r.deleted_at IS NULL
+        FROM reviews r WHERE r.status = 'queued' AND r.deleted_at IS NULL ${candidates}
       ) q JOIN users u ON u.id = q.user_id
-      ORDER BY CASE WHEN q.origin = 'monitor' THEN 2 WHEN u.plan IN ('pro', 'agency') AND u.plan_status IN ('active', 'trialing', 'past_due') THEN 0 ELSE 1 END, q.turn, q.created_at
+      ORDER BY CASE WHEN q.origin = 'monitor' THEN 2 WHEN u.plan IN ('pro', 'agency') AND u.plan_status IN ${PAID_STATUSES_SQL} THEN 0 ELSE 1 END, q.turn, q.created_at
       LIMIT 1`).get() as ClaimedReview | undefined;
     if (!row) return { claimed: null, abandoned };
     conn.prepare(`UPDATE reviews SET status = 'running', stage = 'starting', locked_by = ?, lease_until = ?, attempts = attempts + 1, started_at = COALESCE(started_at, ?) WHERE id = ?`)
@@ -321,10 +331,43 @@ export function releaseReview(id: string, workerId: string, opts: { countAttempt
     WHERE id = ? AND locked_by = ? AND status = 'running'`).run(id, workerId);
 }
 
-/** AI spend today (UTC), used for the daily budget guard. */
+/** AI spend today (UTC), used for the daily budget guards. */
 export function spendToday(): number {
   const start = new Date(); start.setUTCHours(0, 0, 0, 0);
   return (db().prepare('SELECT COALESCE(SUM(cost_usd), 0) AS s FROM reviews WHERE finished_at >= ?').get(start.getTime()) as { s: number }).s;
+}
+
+// ---------------------------------------------------------------- capacity
+
+/** open: everyone; paid_only: past the daily budget, so paying customers only; closed: past the hard cap, nobody. */
+export type CapacityMode = 'open' | 'paid_only' | 'closed';
+export type CapacityCheck = { ok: true } | { ok: false; reason: 'budget' | 'hard_cap' };
+
+/**
+ * What today's estimated AI spend allows. The budget stops free usage from
+ * using up the day; only the hard cap stops paying customers. The worker and
+ * the API routes both ask here, so they always agree.
+ */
+export function capacityMode(spend: number = spendToday()): CapacityMode {
+  if (spend >= env.aiDailyHardCapUsd) return 'closed';
+  return spend >= env.aiDailyBudgetUsd ? 'paid_only' : 'open';
+}
+
+/** Whether this person (null: a visitor without an account) may start a review right now. */
+export function capacityCheck(user: User | null, spend: number = spendToday()): CapacityCheck {
+  const mode = capacityMode(spend);
+  if (mode === 'closed') return { ok: false, reason: 'hard_cap' };
+  if (mode === 'paid_only' && !(user && entitledPlan(user).id !== 'free')) return { ok: false, reason: 'budget' };
+  return { ok: true };
+}
+
+/** The 503 the review routes return when capacityCheck says no. */
+export function assertCapacity(user: User | null) {
+  const check = capacityCheck(user);
+  if (check.ok) return;
+  throw new HttpError(503, check.reason === 'budget'
+    ? 'PageGrade is very busy today, so free grades and reviews are paused until tomorrow. Paid plans are still running.'
+    : 'PageGrade is very busy right now. Please try again in a few hours.', 'capacity');
 }
 
 export function reviewOwner(id: string) {
