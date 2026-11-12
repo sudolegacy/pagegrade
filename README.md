@@ -24,6 +24,10 @@ Free grader, weekly monitoring with email alerts, agency tools (client folders, 
 - **Founder emails**: a sign-up alert for every new account, a lead alert for every pack request and a weekly digest (`FOUNDER_ALERT_EMAIL`).
 - **Lifecycle emails**: first-review nudge, free-reviews-used upgrade note, Agency onboarding and day 7 / day 25 check-ins, each sent once per user by the worker.
 - **CSV export** of review results from History and client folders.
+- **Prospect packs in one click**: on a lead, **Build pack** creates a client folder branded with the agency's name, queues the audits, tracks progress with PDF links and drafts the reply. Client folders can carry their own name, colour and logo, used on that folder's shared reports and PDFs.
+- **Weekly check-in**: log the Outreach Autopilot's numbers each Monday and the plan page shows pack-request, opt-out and bounce rates against the plan's targets, with a week-by-week history filled by automatic metric snapshots.
+- **AI budget that protects customers**: at the daily budget, free usage pauses; paying customers continue up to a hard cap (`AI_DAILY_HARD_CAP_USD`, default three times the budget).
+- **Agency onboarding checklist** on the overview (branding, client folder, bulk review, five weekly checks) and a guide, *How to win new clients by sending free landing page audits*.
 - `outreach/`: the free Outreach Autopilot (Google Sheets + Apps Script) that finds emails, sends, follows up and stops on reply. `docs/business-plan-v2.pdf`: the written plan this release implements.
 
 ## Repository layout

@@ -43,5 +43,9 @@ Benchmark: 9 pages × 2 runs; score spread max 2 and mean 1.3 points, median 46s
 - [x] CSV export of review results; stale pricing FAQ fixed; founding-price terms on the pricing page.
 - [x] `.env.example` uses the plan's launch safeguards (`AI_DAILY_BUDGET_USD=1`, `FREE_GRADER_DAILY_LIMIT=20`); CI workflow added.
 - [x] Outreach Autopilot kit committed under `outreach/`; business plan PDF under `docs/`.
+- [x] Build pack from a lead (client folder + queued audits + progress + reply draft); client-folder branding on shared reports and PDFs.
+- [x] Weekly check-in form and metric history on the plan page; scoreboard rates against the plan's targets.
+- [x] AI budget pauses free usage first; paying customers continue to `AI_DAILY_HARD_CAP_USD`.
+- [x] Agency onboarding checklist on the overview; guide for agencies; cookie policy lists every cookie.
 - [ ] Set `FOUNDER_ALERT_EMAIL`, `NEXT_PUBLIC_BOOKING_URL` and the rest of the launch checklist in Admin → Business plan until every item is green.
 - [ ] Update `/terms` before advertising the Agency money-back promise anywhere.

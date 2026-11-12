@@ -79,6 +79,11 @@ The worker uses SQLite's online backup API approximately daily and retains the n
 - **CSV export** of review results is available from History and client folders (`/api/reviews/export`).
 - **Database.** Migration 3 adds `leads` and `lifecycle_emails`; it runs automatically on start. Take a backup before the first deploy of this version as usual.
 - **Continuous integration.** `.github/workflows/ci.yml` runs the type check, unit tests and build on every pull request.
+- **Prospect packs.** On a pack lead in Admin → Business plan → Pipeline, **Build pack** creates a client folder named after the agency (its name becomes the folder brand), queues an audit of each prospect, shows progress and PDF links, and drafts the reply (**Copy reply**). Add the agency's logo and colour to the folder on the Clients page before downloading the PDFs.
+- **Client-folder branding.** A folder's own name, colour and logo (Clients page, Branding) replace the account brand on that folder's shared reports and PDFs. Logos are stored under `DATA_DIR/brands` like account logos. Only accounts with branding (Agency plan or admins) are honoured.
+- **Weekly check-in.** Admin → Business plan → Weekly check-in takes the Outreach Autopilot's numbers for the week; the scoreboard then shows pack-request, opt-out and bounce rates against the plan's targets. The worker records a metric snapshot every week (with the digest, whether or not a founder address is set) into `metric_snapshots`, which fills the history table.
+- **AI budget behaviour changed.** At `AI_DAILY_BUDGET_USD`, free grades and Free-plan reviews pause for the day; paying customers' reviews (and their weekly checks) continue until `AI_DAILY_HARD_CAP_USD` (default three times the budget), when everything pauses. The worker and the review, bulk and grade routes apply the same rule.
+- **Database.** Migration 4 adds brand columns to `clients`, pack links on `leads`, and the `outreach_weeks` and `metric_snapshots` tables; it runs automatically on start.
 
 ## Known limits
 
