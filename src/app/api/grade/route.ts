@@ -3,7 +3,7 @@ import { handler, assertSameOrigin, clientIp, readJson, json, HttpError } from '
 import { limitOrThrow } from '@/lib/server/auth-flows';
 import { rateLimit } from '@/lib/server/ratelimit';
 import { env } from '@/lib/server/env';
-import { spendToday } from '@/lib/server/reviews';
+import { assertCapacity } from '@/lib/server/reviews';
 import { GUEST_COOKIE, GUEST_COOKIE_MAX_AGE, createGuestReview, guestGradesSince, inflightGuestGrade, isGuestKey, newGuestKey } from '@/lib/server/grader';
 import { PAGE_TYPES, GOALS, type PageType, type Goal } from '@/lib/engine/intake';
 import { UrlRejectedError, validatePublicUrl } from '@/lib/engine/net/url-guard';
@@ -38,9 +38,11 @@ export const POST = handler(async (req) => {
   const running = inflightGuestGrade(key);
   if (running) throw new HttpError(409, 'Your last free grade is still running. It usually takes about a minute.', 'grade_in_progress', { id: running });
 
+  // Capacity comes first: when free reviews are paused too, suggesting a free account would send people to the same wall.
+  assertCapacity(null);
   const midnight = new Date();
   midnight.setUTCHours(0, 0, 0, 0);
-  if (guestGradesSince(midnight.getTime()) >= env.graderDailyLimit || spendToday() >= Number(process.env.AI_DAILY_BUDGET_USD || 25)) {
+  if (guestGradesSince(midnight.getTime()) >= env.graderDailyLimit) {
     throw new HttpError(503, 'The free grader is very busy today. Create a free account to review your page now, or try again tomorrow.', 'capacity');
   }
   if (!rateLimit(`grade:ip:${ip}`, env.graderPerIp, 24 * 3600_000).ok) {

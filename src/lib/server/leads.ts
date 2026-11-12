@@ -16,14 +16,16 @@ export const LEAD_STATUSES: { id: LeadStatus; label: string }[] = [
   { id: 'lost', label: 'Not now' },
 ];
 
+/** `clientId` and `batchId` point at the client folder and review batch built for a pack request (see packs.ts). */
 export type Lead = {
   id: string; kind: LeadKind; name: string; email: string; company: string; website: string; message: string;
-  prospects: string[]; source: string; status: LeadStatus; note: string; userId: string | null; createdAt: number; updatedAt: number;
+  prospects: string[]; source: string; status: LeadStatus; note: string; userId: string | null;
+  clientId: string | null; batchId: string | null; createdAt: number; updatedAt: number;
 };
 
 type Row = {
   id: string; kind: LeadKind; name: string; email: string; company: string; website: string; message: string; prospects: string;
-  source: string; status: LeadStatus; note: string; user_id: string | null; created_at: number; updated_at: number;
+  source: string; status: LeadStatus; note: string; user_id: string | null; client_id: string | null; batch_id: string | null; created_at: number; updated_at: number;
 };
 
 const toLead = (r: Row): Lead => {
@@ -31,7 +33,8 @@ const toLead = (r: Row): Lead => {
   try { const v = JSON.parse(r.prospects); if (Array.isArray(v)) prospects = v.filter((x): x is string => typeof x === 'string'); } catch { /* stored by us; ignore corruption */ }
   return {
     id: r.id, kind: r.kind, name: r.name, email: r.email, company: r.company, website: r.website, message: r.message, prospects,
-    source: r.source, status: r.status, note: r.note, userId: r.user_id, createdAt: r.created_at, updatedAt: r.updated_at,
+    source: r.source, status: r.status, note: r.note, userId: r.user_id, clientId: r.client_id ?? null, batchId: r.batch_id ?? null,
+    createdAt: r.created_at, updatedAt: r.updated_at,
   };
 };
 
@@ -58,12 +61,14 @@ export function listLeads(opts: { open?: boolean; limit?: number } = {}): Lead[]
   return rows.map(toLead);
 }
 
-export function updateLead(id: string, fields: Partial<{ status: LeadStatus; note: string; userId: string | null }>): boolean {
+export function updateLead(id: string, fields: Partial<{ status: LeadStatus; note: string; userId: string | null; clientId: string | null; batchId: string | null }>): boolean {
   const sets: string[] = [];
   const params: Record<string, unknown> = { id, updated_at: now() };
   if (fields.status) { sets.push('status = @status'); params.status = fields.status; }
   if (fields.note != null) { sets.push('note = @note'); params.note = fields.note.trim().slice(0, 2000); }
   if (fields.userId !== undefined) { sets.push('user_id = @user_id'); params.user_id = fields.userId; }
+  if (fields.clientId !== undefined) { sets.push('client_id = @client_id'); params.client_id = fields.clientId; }
+  if (fields.batchId !== undefined) { sets.push('batch_id = @batch_id'); params.batch_id = fields.batchId; }
   if (!sets.length) return false;
   return db().prepare(`UPDATE leads SET ${sets.join(', ')}, updated_at = @updated_at WHERE id = @id`).run(params).changes > 0;
 }

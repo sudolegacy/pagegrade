@@ -3,6 +3,7 @@ import { env } from './env';
 import { adminOverview } from './admin';
 import { leadStats } from './leads';
 import { mailer } from './mail';
+import { recordSnapshot } from './metrics-history';
 
 const DAY = 24 * 3600 * 1000;
 
@@ -59,8 +60,12 @@ export function nextDigestAt(from = Date.now()): number {
   return d.getTime();
 }
 
-/** Emails the numbers to the founder. Does nothing when no founder or admin address is configured. */
+/**
+ * Records the week's snapshot, then emails the numbers to the founder. The snapshot comes first so the history on the plan page
+ * builds up even when no founder or admin address is configured (the email is then skipped).
+ */
 export async function sendFounderDigest(at = Date.now()): Promise<{ sent: boolean }> {
+  try { recordSnapshot(at); } catch (error) { console.error('[digest] could not record the weekly snapshot', error); }
   const to = env.founderAlertEmail;
   if (!to) return { sent: false };
   return mailer.founderDigest(to, buildDigest(at));
