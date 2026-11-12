@@ -9,7 +9,7 @@ import { ButtonLink } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { hostPath } from '@/lib/format';
 import { findUserById } from '@/lib/server/users';
-import { brandFor } from '@/lib/server/brand';
+import { reportBrand } from '@/lib/server/brand';
 import { BrandBar } from '@/components/report/brand-bar';
 
 export const dynamic = 'force-dynamic';
@@ -30,7 +30,7 @@ export default async function SharedReviewPage({ params }: Props) {
   const review = getSharedReview(shareId);
   if (!review?.report) notFound();
   const assets = assetsFor(review.report, (file) => `/api/reviews/${review.id}/files/${file}?s=${encodeURIComponent(shareId)}`);
-  const brand = brandFor(findUserById(review.userId));
+  const brand = reportBrand(findUserById(review.userId), review.clientId);
   const header = (
     <div className="space-y-6">
       {brand && <BrandBar brand={brand} note="Landing page review" />}
