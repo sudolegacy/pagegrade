@@ -1,4 +1,5 @@
 import { db, kv, now } from './db';
+import { env } from './env';
 import { spendToday } from './reviews';
 import { monthlyValue, planById, type BillingInterval } from '../plans';
 import { feedbackCounts, recentFeedback } from './feedback';
@@ -75,7 +76,8 @@ export function adminOverview() {
     signupReasons: feedbackCounts('signup'),
     cancelReasons: feedbackCounts('cancel'),
     spendToday: spendToday(),
-    budgetUsd: Number(process.env.AI_DAILY_BUDGET_USD || 25),
+    budgetUsd: env.aiDailyBudgetUsd,
+    hardCapUsd: env.aiDailyHardCapUsd,
     worker: parse<Heartbeat>(kv.get('worker:heartbeat')),
     backup: parse<Backup>(kv.get('backup:last')),
   };
