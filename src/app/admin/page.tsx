@@ -87,10 +87,11 @@ export default function AdminPage() {
         {o.paid.map((p) => <span key={p.plan} className="rounded-md bg-brand-50 px-2 py-1 tabular-nums text-brand-800">{planById(p.plan)?.name ?? p.plan} <b className="font-semibold">{p.n}</b></span>)}
       </div>
 
-      <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         <Stat label="Free grades (7 days)" value={o.growth.grades} detail={`${o.growth.claimed} unlocked by signed-up users`} />
         <Stat label="Monitored pages" value={o.monitors} detail={`${o.growth.checks} weekly checks in the last 7 days`} />
         <Stat label="Bulk reviews (7 days)" value={o.growth.bulk} detail={`${o.yearlyCustomers} customer${o.yearlyCustomers === 1 ? '' : 's'} on yearly billing`} />
+        <Stat label="Widget checks (7 days)" value={o.growth.widget} detail={`${o.widgets} live lead widget${o.widgets === 1 ? '' : 's'}`} />
         <Stat label="Referred sign-ups" value={o.referred} detail={`${o.partners.length} partner${o.partners.length === 1 ? '' : 's'}`} />
       </div>
 

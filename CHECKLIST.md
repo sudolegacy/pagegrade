@@ -49,3 +49,12 @@ Benchmark: 9 pages × 2 runs; score spread max 2 and mean 1.3 points, median 46s
 - [x] Agency onboarding checklist on the overview; guide for agencies; cookie policy lists every cookie.
 - [ ] Set `FOUNDER_ALERT_EMAIL`, `NEXT_PUBLIC_BOOKING_URL` and the rest of the launch checklist in Admin → Business plan until every item is green.
 - [ ] Update `/terms` before advertising the Agency money-back promise anywhere.
+
+## v2.3 — lead widget (Agency)
+
+- [x] Lead widget: settings, install snippet, live preview and leads inbox (App → Lead widget); embeddable check at `/embed/<id>` with `/embed.js`.
+- [x] Widget checks: own monthly allowance, per-visitor and per-agency limits, front of the queue, kept out of History/Pages/Compare, one email per lead.
+- [x] Leads: status, CSV export, delete with report; privacy policy and terms describe the widget.
+- [x] Unit tests for the widget, its routes and the embed page's escaping and CSP.
+- [ ] After deploying: install the widget on a real agency test page on another domain, run a check end to end with a live AI key, and confirm the lead email arrives.
+- [ ] Have the privacy policy and terms changes reviewed with the rest of the legal pages.

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState, type ReactNode } from 'react';
 import * as D from '@radix-ui/react-dialog';
-import { CreditCard, GitCompareArrows, History as HistoryIcon, LayoutGrid, ChartLine, LogOut, Menu as MenuIcon, Plus, Settings, Shield, X, ChevronsUpDown, LifeBuoy, BookOpen, Activity, Users, Layers, Gift } from 'lucide-react';
+import { CreditCard, GitCompareArrows, History as HistoryIcon, LayoutGrid, ChartLine, LogOut, Menu as MenuIcon, Plus, Settings, Shield, X, ChevronsUpDown, LifeBuoy, BookOpen, Activity, Users, Layers, Gift, Magnet } from 'lucide-react';
 import { Logo, LogoMark } from '@/components/ui/logo';
 import { Menu, MenuItem, MenuLabel, MenuSeparator } from '@/components/ui/menu';
 import { buttonClass } from '@/components/ui/button';
@@ -22,10 +22,11 @@ const NAV = [
   { href: '/app/settings', label: 'Settings', icon: Settings },
 ];
 
-/** Agency plan: client folders and bulk reviews, shown just above Settings. */
+/** Agency plan: client folders, bulk reviews and the lead widget, shown just above Settings. */
 const AGENCY_NAV = [
   { href: '/app/clients', label: 'Clients', icon: Users },
   { href: '/app/bulk', label: 'Bulk review', icon: Layers },
+  { href: '/app/widget', label: 'Lead widget', icon: Magnet },
 ];
 
 function NavLinks({ admin, agency, onNavigate }: { admin: boolean; agency?: boolean; onNavigate?: () => void }) {

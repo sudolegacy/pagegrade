@@ -8,5 +8,5 @@ export function companyLine() {
   return parts.join(', ');
 }
 
-export const LEGAL_UPDATED = '6 November 2026';
-export const LEGAL_UPDATED_ISO = '2026-11-06';
+export const LEGAL_UPDATED = '12 November 2026';
+export const LEGAL_UPDATED_ISO = '2026-11-12';

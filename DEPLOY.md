@@ -85,6 +85,14 @@ The worker uses SQLite's online backup API approximately daily and retains the n
 - **AI budget behaviour changed.** At `AI_DAILY_BUDGET_USD`, free grades and Free-plan reviews pause for the day; paying customers' reviews (and their weekly checks) continue until `AI_DAILY_HARD_CAP_USD` (default three times the budget), when everything pauses. The worker and the review, bulk and grade routes apply the same rule.
 - **Database.** Migration 4 adds brand columns to `clients`, pack links on `leads`, and the `outreach_weeks` and `metric_snapshots` tables; it runs automatically on start.
 
+## v2.3 lead widget
+
+- **Database.** Migration 5 adds the `widgets` and `widget_leads` tables; it runs automatically on start and is additive, so older code ignores it. Back up the volume first as usual.
+- **No new variables.** The embed snippet uses `APP_URL`, so the canonical HTTPS origin must be set before agencies copy it (changing it later breaks installed snippets). Lead emails need SMTP like every other email.
+- **Headers.** `/embed/*` is excluded from the site-wide security headers in `next.config.mjs` (they forbid framing) and sends its own CSP: nonce-only scripts and styles, `connect-src 'self'`, and `frame-ancestors` limited to the sites listed in the widget settings (anywhere if none are listed). After deploying, check `curl -sI $APP_URL/embed/<id>` shows that CSP and no `X-Frame-Options`, and that other pages still send `X-Frame-Options: DENY`.
+- **Cost.** Each visitor check is a full review (about $0.02 of AI). Limits: 100 a month per Agency account, 3 per visitor per day per widget, 5 running per agency; the daily AI budget and hard cap still apply. Paying agencies' widget checks go to the front of the queue.
+- **Privacy.** The privacy policy and terms now describe the widget: the agency is the controller of its leads and PageGrade its processor. Have this reviewed with the rest of the legal pages before launch.
+
 ## Known limits
 
 - Docker/Railway and production email have not been tested in this environment; the live service must be validated after configuration.

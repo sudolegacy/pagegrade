@@ -10,8 +10,8 @@ import type { Report } from '../engine/report';
 import type { Intake } from '../engine/intake';
 
 export type ReviewStatus = 'queued' | 'running' | 'complete' | 'failed';
-/** app: started in the app; bulk: part of a bulk batch; guest: free grader; monitor: weekly check. */
-export type ReviewOrigin = 'app' | 'bulk' | 'guest' | 'monitor';
+/** app: started in the app; bulk: part of a bulk batch; guest: free grader; monitor: weekly check; widget: a visitor's audit through an agency's lead widget. */
+export type ReviewOrigin = 'app' | 'bulk' | 'guest' | 'monitor' | 'widget';
 
 const DAY = 24 * 3600 * 1000;
 
@@ -162,7 +162,8 @@ export function createReview(user: User, input: NewReview, opts: CreateOptions =
 
 export function listReviews(userId: string, opts: { limit?: number; before?: number; q?: string; status?: ReviewStatus; clientId?: string; batchId?: string } = {}): ReviewSummary[] {
   const limit = Math.max(1, Math.min(100, opts.limit ?? 50));
-  const where = ['user_id = ?', 'deleted_at IS NULL', 'created_at < ?'];
+  // Lead-widget audits are prospects' pages: they live in the Leads list, not in the account's own history.
+  const where = ['user_id = ?', 'deleted_at IS NULL', 'created_at < ?', "origin != 'widget'"];
   const args: (string | number)[] = [userId, opts.before ?? Number.MAX_SAFE_INTEGER];
   const q = opts.q?.trim().slice(0, 200);
   if (q) { where.push("(url LIKE ? ESCAPE '\\' OR final_url LIKE ? ESCAPE '\\')"); const like = `%${q.replace(/[\\%_]/g, (c) => `\\${c}`)}%`; args.push(like, like); }
@@ -176,7 +177,7 @@ export function listReviews(userId: string, opts: { limit?: number; before?: num
 
 /** Completed reviews (score history) for the Pages and Compare views, oldest first. No report bodies. */
 export function listScoreHistory(userId: string, limit = 500): ReviewSummary[] {
-  const rows = db().prepare(`SELECT ${SUMMARY_COLS} FROM reviews WHERE user_id = ? AND deleted_at IS NULL AND status = 'complete' AND score IS NOT NULL ORDER BY created_at DESC LIMIT ?`)
+  const rows = db().prepare(`SELECT ${SUMMARY_COLS} FROM reviews WHERE user_id = ? AND deleted_at IS NULL AND status = 'complete' AND score IS NOT NULL AND origin != 'widget' ORDER BY created_at DESC LIMIT ?`)
     .all(userId, Math.max(1, Math.min(1000, limit))) as Row[];
   return rows.map(toSummary).reverse();
 }
@@ -265,7 +266,9 @@ export const MAX_ATTEMPTS = 3;
 /**
  * Atomically claims the next queued review. Paid Pro/Agency reviews go first,
  * weekly monitor checks last; within a tier, people take turns, so one bulk
- * batch of 25 pages does not hold up everyone else. With `paidOnly`, reviews
+ * batch of 25 pages does not hold up everyone else. Lead-widget audits from
+ * paying agencies go ahead of everything: a visitor is waiting for the result on
+ * the agency's website (they are capped at WIDGET_INFLIGHT_MAX per agency). With `paidOnly`, reviews
  * from free accounts and the free grader stay queued instead (the worker asks
  * for this once the daily budget is spent). Reviews whose worker stopped
  * heartbeating are requeued, or failed after MAX_ATTEMPTS so a poison page
@@ -288,11 +291,11 @@ export function claimNextReview(workerId: string, leaseMs: number, opts: { paidO
     const row = conn.prepare(`SELECT q.id, q.user_id, q.url, q.page_type, q.goal, q.audience, q.context, q.attempts, q.created_at, q.origin, q.monitor_id
       FROM (
         SELECT r.*, ROW_NUMBER() OVER (
-          PARTITION BY CASE WHEN r.origin = 'guest' THEN r.id WHEN r.origin = 'monitor' THEN r.user_id || ':monitor' ELSE r.user_id END
+          PARTITION BY CASE WHEN r.origin IN ('guest', 'widget') THEN r.id WHEN r.origin = 'monitor' THEN r.user_id || ':monitor' ELSE r.user_id END
           ORDER BY r.created_at) AS turn
         FROM reviews r WHERE r.status = 'queued' AND r.deleted_at IS NULL ${candidates}
       ) q JOIN users u ON u.id = q.user_id
-      ORDER BY CASE WHEN q.origin = 'monitor' THEN 2 WHEN u.plan IN ('pro', 'agency') AND u.plan_status IN ${PAID_STATUSES_SQL} THEN 0 ELSE 1 END, q.turn, q.created_at
+      ORDER BY CASE WHEN q.origin = 'monitor' THEN 3 WHEN u.plan IN ('pro', 'agency') AND u.plan_status IN ${PAID_STATUSES_SQL} THEN (CASE WHEN q.origin = 'widget' THEN 0 ELSE 1 END) ELSE 2 END, q.turn, q.created_at
       LIMIT 1`).get() as ClaimedReview | undefined;
     if (!row) return { claimed: null, abandoned };
     conn.prepare(`UPDATE reviews SET status = 'running', stage = 'starting', locked_by = ?, lease_until = ?, attempts = attempts + 1, started_at = COALESCE(started_at, ?) WHERE id = ?`)
@@ -309,11 +312,11 @@ export function heartbeat(id: string, workerId: string, leaseMs: number, stage?:
   return res.changes > 0;
 }
 
-/** Stores the report and charges the review in one transaction (free grades and weekly checks are not charged). */
+/** Stores the report and charges the review in one transaction (free grades, weekly checks and widget audits are not charged). */
 export function completeReview(id: string, workerId: string, report: Report, durationMs: number): boolean {
   const t = now();
   const res = db().prepare(`UPDATE reviews SET status = 'complete', stage = NULL, score = ?, grade = ?, verdict = ?, final_url = ?, report_json = ?,
-      charged = CASE WHEN origin IN ('guest', 'monitor') THEN 0 ELSE 1 END, charged_at = CASE WHEN origin IN ('guest', 'monitor') THEN NULL ELSE ? END,
+      charged = CASE WHEN origin IN ('guest', 'monitor', 'widget') THEN 0 ELSE 1 END, charged_at = CASE WHEN origin IN ('guest', 'monitor', 'widget') THEN NULL ELSE ? END,
       cost_usd = ?, duration_ms = ?, finished_at = ?, locked_by = NULL, lease_until = NULL, error_code = NULL, error_message = NULL
     WHERE id = ? AND locked_by = ? AND status = 'running'`)
     .run(report.score, report.grade, report.verdict, report.finalUrl, JSON.stringify(report), t, report.meta.usage.costUsd, durationMs, t, id, workerId);

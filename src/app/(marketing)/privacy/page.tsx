@@ -24,6 +24,8 @@ export default function PrivacyPage() {
       <p>Payments are handled by Stripe. We do not see or store your full card details. We keep your Stripe customer reference, your plan, its status and renewal date.</p>
       <h3>When you ask for a prospect pack or a call</h3>
       <p>Your name, work email address, agency name and website, the public page addresses you ask us to review, and anything you write in the message box. We use them to prepare and send your pack, to reply to you about it and, if you become a customer, to set up your account. We keep them for up to 12 months after our last contact, or until you ask us to delete them.</p>
+      <h3>When you use a website check on another business&rsquo;s site</h3>
+      <p>Some PageGrade customers put our website check (the &ldquo;lead widget&rdquo;) on their own website. If you use one, we collect the page address you enter, the goal you choose, your name and email address, and the address of the page the check sits on. We run the check, show you the result, and pass your details and the full report to that business, which may contact you about it. For these details that business is the controller and we process them on its behalf: its privacy policy, linked under the form where it has given us one, explains how it uses them. To have your details deleted, ask that business, or email us and we will pass your request on.</p>
       <h3>When you use the site</h3>
       <p>A session cookie that keeps you signed in (see our <Link href="/cookies">cookie policy</Link>), the browser type of each signed-in session, and IP addresses used briefly to limit repeated sign-in attempts and other abuse. Our hosting provider also keeps server logs, which include IP addresses, for a limited period. We do not use analytics, advertising or tracking cookies.</p>
 
@@ -52,6 +54,7 @@ export default function PrivacyPage() {
       <ul>
         <li><strong>Reviews</strong> are kept until you delete them or your account. When you delete a review we remove its report and screenshots immediately, and keep only the page address, date and outcome so that plan allowances work correctly.</li>
         <li><strong>Your account</strong> is kept until you delete it from Settings. Deleting it removes your account, sessions and all of your reviews, and cancels any subscription.</li>
+        <li><strong>Details given through a lead widget</strong> are kept until the business that runs the widget deletes them, or deletes its account.</li>
         <li><strong>Backups</strong> of our database are kept for up to 7 days, so deleted data disappears from backups within a week.</li>
         <li><strong>A temporary analysis cache</strong>, used so an unchanged page is not analysed twice, is deleted after at most 14 days.</li>
         <li><strong>Payment records</strong> are kept by Stripe and by us for as long as tax law requires (normally six years).</li>
